@@ -2,7 +2,7 @@
 
 --SELECT settings->'d' FROM settings WHERE servicename = 'testService';
 
---SELECT settings FROM settings WHERE serviceName = 'testService';
+SELECT settings FROM settings WHERE serviceName = 'testService';
 
 --SELECT settings->'c'->'ca' FROM settings WHERE servicename = 'testService';
 
@@ -15,3 +15,5 @@
 --UPDATE settings SET settings = jsonb_set(settings, '{b, ba}', '"zzzzzzz"', true) WHERE servicename = 'newService';
 
 --UPDATE settings SET settings = jsonb_set(settings, '{c,ca}', '10', FALSE) WHERE servicename = 'testService';
+
+UPDATE settings SET settings = settings::jsonb #- '{c,ca}' WHERE servicename = 'testService';

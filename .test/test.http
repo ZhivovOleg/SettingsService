@@ -8,11 +8,6 @@ GET http://localhost:9999/v1/settings/testService HTTP/1.1
 
 ###
 
-# get single field 
-GET http://localhost:9999/v1/settings/testService/c,ca HTTP/1.1
-
-###
-
 # add new service options
 POST http://localhost:9999/v1/settings/ HTTP/1.1
 Content-Type: application/json
@@ -52,5 +47,15 @@ Content-Type: "application/json"
     "optionValue": "сссссс",
     "optionPath": "b/ba"
 }
+
+###
+
+# get single field 
+GET http://localhost:9999/v1/settings/testService/c,ca HTTP/1.1
+
+###
+
+# delete single field 
+DELETE http://localhost:9999/v1/settings/testService/d,1 HTTP/1.1
 
 ###

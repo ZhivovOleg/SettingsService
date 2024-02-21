@@ -251,17 +251,54 @@ const docTemplate = `{
         },
         "/settings/{serviceName}/{path}": {
             "get": {
-                "description": "Get service option as string by service name and  option path",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
+                "description": "Get service option as string by service name and option path",
                 "tags": [
                     "settings"
                 ],
                 "summary": "Get concrete service option",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service name",
+                        "name": "serviceName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Option path, comma-separated keys",
+                        "name": "path",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete service option by service name and option path",
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Delete concrete service option",
                 "parameters": [
                     {
                         "type": "string",

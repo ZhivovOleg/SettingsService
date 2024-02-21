@@ -211,10 +211,8 @@ paths:
       tags:
       - settings
   /settings/{serviceName}/{path}:
-    get:
-      consumes:
-      - application/json
-      description: Get service option as string by service name and  option path
+    delete:
+      description: Delete service option by service name and option path
       parameters:
       - description: Service name
         in: path
@@ -226,8 +224,35 @@ paths:
         name: path
         required: true
         type: string
-      produces:
-      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.HttpError'
+      summary: Delete concrete service option
+      tags:
+      - settings
+    get:
+      description: Get service option as string by service name and option path
+      parameters:
+      - description: Service name
+        in: path
+        name: serviceName
+        required: true
+        type: string
+      - description: Option path, comma-separated keys
+        in: path
+        name: path
+        required: true
+        type: string
       responses:
         "200":
           description: OK

@@ -63,46 +63,6 @@ func GetOptions(context *gin.Context) {
 	context.JSON(http.StatusOK, serviceSetting)
 }
 
-//	@Summary		Get concrete service option
-//	@Description	Get service option as string by service name and  option path
-//	@Tags			settings
-//  @Accept       	json
-//	@Produce		json
-//	@Param			serviceName		path		string	true	"Service name"
-//	@Param			path			path		string	true	"Option path, comma-separated keys"
-//	@Success		200	{object}	string
-//	@Failure		400	{object}	dto.HttpError
-//	@Failure		500	{object}	dto.HttpError
-//	@Router			/settings/{serviceName}/{path} [get]
-func GetConcreteOption(context *gin.Context) {
-	serviceName := context.Param("serviceName")
-
-	if serviceName == "" {
-		utils.Logger.Error("Argument error: Service name not found")
-		context.String(http.StatusBadRequest, "Argument error: Service name not found")
-		return
-	}
-
-	optionPath := context.Param("path")
-
-	if optionPath == "" {
-		utils.Logger.Error("Argument error: option path not found")
-		context.String(http.StatusBadRequest, "Argument error: option path not found")
-		return
-	}
-
-	requestContext := context.Request.Context()
-	serviceSetting, serviceErr := dal.GetConcreteOptionFromDb(&serviceName, &optionPath, &requestContext)
-	
-	if serviceErr != nil {
-		utils.Logger.Error("Error on getting data from DB: " + (*serviceErr).Error())
-		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + (*serviceErr).Error())
-		return
-	}
-	
-	context.JSON(http.StatusOK, serviceSetting)
-}
-
 //	@Summary		Add complete settings
 //	@Description	Add complete settings for new service as string by service name
 //	@Tags			settings
@@ -230,5 +190,81 @@ func UpdateOption(context *gin.Context) {
 		context.String(http.StatusBadRequest, "Error while update data in DB: " + err.Error())
 		return
 	}
+	context.Status(http.StatusOK)
+}
+
+//	@Summary		Get concrete service option
+//	@Description	Get service option as string by service name and option path
+//	@Tags			settings
+//	@Param			serviceName		path		string	true	"Service name"
+//	@Param			path			path		string	true	"Option path, comma-separated keys"
+//	@Success		200	{object}	string
+//	@Failure		400	{object}	dto.HttpError
+//	@Failure		500	{object}	dto.HttpError
+//	@Router			/settings/{serviceName}/{path} [get]
+func GetConcreteOption(context *gin.Context) {
+	serviceName := context.Param("serviceName")
+
+	if serviceName == "" {
+		utils.Logger.Error("Argument error: Service name not found")
+		context.String(http.StatusBadRequest, "Argument error: Service name not found")
+		return
+	}
+
+	optionPath := context.Param("path")
+
+	if optionPath == "" {
+		utils.Logger.Error("Argument error: option path not found")
+		context.String(http.StatusBadRequest, "Argument error: option path not found")
+		return
+	}
+
+	requestContext := context.Request.Context()
+	serviceSetting, serviceErr := dal.GetConcreteOptionFromDb(&serviceName, &optionPath, &requestContext)
+	
+	if serviceErr != nil {
+		utils.Logger.Error("Error on getting data from DB: " + (*serviceErr).Error())
+		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + (*serviceErr).Error())
+		return
+	}
+	
+	context.JSON(http.StatusOK, serviceSetting)
+}
+
+//	@Summary		Delete concrete service option
+//	@Description	Delete service option by service name and option path
+//	@Tags			settings
+//	@Param			serviceName		path		string	true	"Service name"
+//	@Param			path			path		string	true	"Option path, comma-separated keys"
+//	@Success		200	{object}	string
+//	@Failure		400	{object}	dto.HttpError
+//	@Failure		500	{object}	dto.HttpError
+//	@Router			/settings/{serviceName}/{path} [delete]
+func DeleteConcreteOption(context *gin.Context) {
+	serviceName := context.Param("serviceName")
+
+	if serviceName == "" {
+		utils.Logger.Error("Argument error: Service name not found")
+		context.String(http.StatusBadRequest, "Argument error: Service name not found")
+		return
+	}
+
+	optionPath := context.Param("path")
+
+	if optionPath == "" {
+		utils.Logger.Error("Argument error: option path not found")
+		context.String(http.StatusBadRequest, "Argument error: option path not found")
+		return
+	}
+
+	requestContext := context.Request.Context()
+	serviceErr := dal.DeleteConcreteOptionFromDb(&serviceName, &optionPath, &requestContext)
+	
+	if serviceErr != nil {
+		utils.Logger.Error("Error on getting data from DB: " + (*serviceErr).Error())
+		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + (*serviceErr).Error())
+		return
+	}
+	
 	context.Status(http.StatusOK)
 }

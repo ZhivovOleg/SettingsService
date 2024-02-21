@@ -17,6 +17,7 @@ const (
 	deleteOptionsQuery string = "DELETE from settings WHERE servicename = @serviceName"
 	replaceOptionsQuery string = "UPDATE settings SET settings = @settings WHERE servicename = @serviceName"
 	updateOptionQuery string = "UPDATE settings SET settings = jsonb_set(settings, '%s', '%v', TRUE) WHERE servicename = '%s'"
+	deleteConcreteOptionQuery string = "UPDATE settings SET settings = settings::jsonb #- '{%s}' WHERE servicename = '%s'"
 )
 
 func GetAllSettingsFromDb(ctx *context.Context) (map[string]string, *error) {
@@ -31,8 +32,7 @@ func GetAllSettingsFromDb(ctx *context.Context) (map[string]string, *error) {
 
 func GetSettingsFromDb(serviceName *string, ctx *context.Context) (*string, *error) {
 	var query string = fmt.Sprintf(getAllOptionsQuery, (*serviceName))
-	
-	//d.initPool()
+
 	result, err := d.execWithReturn(query, ctx)
 
 	if err != nil {
@@ -40,25 +40,6 @@ func GetSettingsFromDb(serviceName *string, ctx *context.Context) (*string, *err
     }
 
 	return &(*result)[0], err
-}
-
-func GetConcreteOptionFromDb(serviceName *string, optionPath *string, ctx *context.Context) (*string, *error) {
-	var pgJsonPath string = "'" + strings.ReplaceAll((*optionPath), ",", "'->'") + "'"
-
-	var query string = fmt.Sprintf(getConcreteOptionQuery, pgJsonPath, (*serviceName))
-
-	//d.initPool()
-	queryResult, err := d.execWithReturn(query, ctx)
-
-	if err != nil {
-		return nil, err
-    }
-
-	r := (*queryResult)[0]
-
-	result := fmt.Sprintf("%v", r)
-
-	return &result, nil
 }
 
 func InsertNewOptionsToDb(serviceName *string, options *string, ctx *context.Context) *error {
@@ -69,11 +50,7 @@ func InsertNewOptionsToDb(serviceName *string, options *string, ctx *context.Con
 
 	err := d.execWithArgs(insertNewOptionsQuery, &args, ctx)
 
-	if err != nil {
-		return err
-    }
-
-	return nil
+	return err
 }
 
 func DeleteSettingsFromDb(serviceName *string, ctx *context.Context) *error {
@@ -81,14 +58,9 @@ func DeleteSettingsFromDb(serviceName *string, ctx *context.Context) *error {
     	"serviceName": serviceName,
   	}
 
-	//d.initPool()
 	err := d.execWithArgs(deleteOptionsQuery, &args, ctx)
 
-	if err != nil {
-		return err
-    }
-
-	return nil
+	return err
 }
 
 func ReplaceOptionsInDb(serviceName *string, options *string, ctx *context.Context) *error {
@@ -97,14 +69,9 @@ func ReplaceOptionsInDb(serviceName *string, options *string, ctx *context.Conte
     	"settings": options,
   	}
 
-	//d.initPool()
 	err := d.execWithArgs(replaceOptionsQuery, &args, ctx)
 
-	if err != nil {
-		return err
-    }
-
-	return nil
+	return err
 }
 
 func UpdateOptionInDb(serviceName *string, optionPath *string, optionValue *string, ctx *context.Context) error {
@@ -120,9 +87,29 @@ func UpdateOptionInDb(serviceName *string, optionPath *string, optionValue *stri
 
 	err := d.exec(q, ctx)
 	
+	return *err
+}
+
+func GetConcreteOptionFromDb(serviceName *string, optionPath *string, ctx *context.Context) (*string, *error) {
+	var pgJsonPath string = "'" + strings.ReplaceAll((*optionPath), ",", "'->'") + "'"
+
+	var query string = fmt.Sprintf(getConcreteOptionQuery, pgJsonPath, (*serviceName))
+	
+	queryResult, err := d.execWithReturn(query, ctx)
+
 	if err != nil {
-		return *err
+		return nil, err
     }
 
-	return nil
+	r := (*queryResult)[0]
+
+	result := fmt.Sprintf("%v", r)
+
+	return &result, nil
+}
+
+func DeleteConcreteOptionFromDb(serviceName *string, optionPath *string, ctx *context.Context) *error {
+	var query string = fmt.Sprintf(deleteConcreteOptionQuery, *optionPath, (*serviceName))
+	err := d.exec(query, ctx)
+	return err
 }
