@@ -21,9 +21,9 @@ func InitApi() {
 	//https://github.com/gin-contrib/cors
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"POST,PATCH,GET,DELETE"},
+		AllowMethods:     []string{"POST,PATCH,PUT,GET,DELETE"},
 		AllowHeaders:     []string{"Content-Type", "Content-Length", "Accept-Encoding", "Authorization", "Cache-Control"},
-		MaxAge:           12 * time.Hour,
+		MaxAge:           time.Hour,
 	}))
 
 	v1settingsController(router.Group("/v1"))

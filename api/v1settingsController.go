@@ -7,7 +7,7 @@ func v1settingsController(v1router *gin.RouterGroup) {
 	settings.GET("/", GetAllOptions)
 	settings.POST("/", NewOption)
     settings.GET("/:serviceName", GetOptions)
-    settings.POST("/:serviceName", GetConcreteOption)
+    settings.GET("/:serviceName/:path", GetConcreteOption)
 	settings.DELETE("/:serviceName", RemoveOptions)
 	settings.PUT("/:serviceName", ReplaceOptions)
 	settings.PATCH("/:serviceName", UpdateOption)

@@ -9,11 +9,7 @@ GET http://localhost:9999/v1/settings/testService HTTP/1.1
 ###
 
 # get single field 
-POST http://localhost:9999/v1/settings/testService HTTP/1.1
-
-{
-    "optionPath": "c/ca"
-}
+GET http://localhost:9999/v1/settings/testService/c,ca HTTP/1.1
 
 ###
 

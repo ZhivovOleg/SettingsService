@@ -68,12 +68,12 @@ func GetOptions(context *gin.Context) {
 //	@Tags			settings
 //  @Accept       	json
 //	@Produce		json
-//	@Param			serviceName		path		string							true	"Service name"
-//	@Param			path			body		dto.GetConcreteOptionRequest	true	"Option path"
+//	@Param			serviceName		path		string	true	"Service name"
+//	@Param			path			path		string	true	"Option path, comma-separated keys"
 //	@Success		200	{object}	string
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
-//	@Router			/settings/{serviceName} [post]
+//	@Router			/settings/{serviceName}/{path} [get]
 func GetConcreteOption(context *gin.Context) {
 	serviceName := context.Param("serviceName")
 
@@ -83,21 +83,20 @@ func GetConcreteOption(context *gin.Context) {
 		return
 	}
 
-	var requestBody dto.GetConcreteOptionRequest
-	err := json.NewDecoder(context.Request.Body).Decode(&requestBody)
+	optionPath := context.Param("path")
 
-	if err != nil {
-		utils.Logger.Error("Error on getting arguments from request body: " + err.Error())
-		context.String(http.StatusBadRequest, "Error on getting arguments from request body: " + err.Error())
+	if optionPath == "" {
+		utils.Logger.Error("Argument error: option path not found")
+		context.String(http.StatusBadRequest, "Argument error: option path not found")
 		return
 	}
 
 	requestContext := context.Request.Context()
-	serviceSetting, serviceErr := dal.GetConcreteOptionFromDb(&serviceName, &requestBody.OptionPath, &requestContext)
+	serviceSetting, serviceErr := dal.GetConcreteOptionFromDb(&serviceName, &optionPath, &requestContext)
 	
 	if serviceErr != nil {
-		utils.Logger.Error("Error on getting data from DB: " + err.Error())
-		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + err.Error())
+		utils.Logger.Error("Error on getting data from DB: " + (*serviceErr).Error())
+		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + (*serviceErr).Error())
 		return
 	}
 	

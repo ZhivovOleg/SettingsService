@@ -45,9 +45,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/settings/": {
+            },
             "post": {
                 "description": "Add complete settings for new service as string by service name",
                 "consumes": [
@@ -172,57 +170,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "Get service option as string by service name and  option path",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "settings"
-                ],
-                "summary": "Get concrete service option",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Service name",
-                        "name": "serviceName",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Option path",
-                        "name": "path",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.GetConcreteOptionRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "description": "Complete remove service settings by service name",
                 "produces": [
@@ -301,21 +248,60 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/settings/{serviceName}/{path}": {
+            "get": {
+                "description": "Get service option as string by service name and  option path",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get concrete service option",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service name",
+                        "name": "serviceName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Option path, comma-separated keys",
+                        "name": "path",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "dto.GetConcreteOptionRequest": {
-            "description": "запрос конкретной настройки",
-            "type": "object",
-            "required": [
-                "optionPath"
-            ],
-            "properties": {
-                "optionPath": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.HttpError": {
             "type": "object",
             "properties": {

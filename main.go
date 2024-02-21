@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"gisogd/SettingsService/api"
 	"gisogd/SettingsService/dal"
 	"gisogd/SettingsService/options"
@@ -28,14 +29,22 @@ func main() {
 	initSettingsErr := options.InitSettings()
 
 	if initSettingsErr != nil {
-		utils.Logger.Fatal("Can't init settings: " + (*initSettingsErr).Error())
+		utils.Logger.Error("Can't init settings: " + (*initSettingsErr).Error())
+		panic("Can't init settings: " + (*initSettingsErr).Error())
 	}
 	
 	pool, initPoolErr := dal.InitPool()
-	if (*initPoolErr) != nil {
-		utils.Logger.Fatal("Can't init database pool: " + (*initPoolErr).Error())
+	if initPoolErr != nil {
+		utils.Logger.Error("Can't init database pool: " + (*initPoolErr).Error())
+		panic("Can't init database pool: " + (*initPoolErr).Error())
 	}
 	defer pool.Close()
 	
+	pingDbErr := pool.Ping(context.Background())	
+	if pingDbErr != nil {
+		utils.Logger.Error("Can't connect with database: " + (*initPoolErr).Error())
+		panic("Can't connect with database: " + (*initPoolErr).Error())
+	}
+
 	api.InitApi()
 }

@@ -43,7 +43,7 @@ func GetSettingsFromDb(serviceName *string, ctx *context.Context) (*string, *err
 }
 
 func GetConcreteOptionFromDb(serviceName *string, optionPath *string, ctx *context.Context) (*string, *error) {
-	var pgJsonPath string = "'" + strings.ReplaceAll((*optionPath), "/", "'->'") + "'"
+	var pgJsonPath string = "'" + strings.ReplaceAll((*optionPath), ",", "'->'") + "'"
 
 	var query string = fmt.Sprintf(getConcreteOptionQuery, pgJsonPath, (*serviceName))
 
