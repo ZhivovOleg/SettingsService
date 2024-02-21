@@ -14,10 +14,11 @@ Store and managing settings for microservices.
 
 ## Develop & Debug & Test
  
-Recommended IDE - VSCode
-Environment for project in `./.vscode/launch.json`
-
-For another IDE's don't forget set up env variable `"SettingsServiceEnv": "dev"`
+Recommended IDE - VSCode.
+<br />
+Environment for project in `./.vscode/launch.json`.
+<br />
+For another IDE's don't forget set up env variable `"SettingsServiceEnv": "dev"`.
 
 1. [Install Go](https://go.dev/dl/)
 0. Install golang `swag` utility:
@@ -48,4 +49,7 @@ go build -ldflags "-s -w"
 ## TODO
 
 1. Add remove-method for exists json fields
-0. 
+0. Add auth
+0. Add unit-tests
+0. Try another DB, for example mongo
+0. Add push mechanism for setting's updates
