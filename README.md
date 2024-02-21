@@ -49,7 +49,9 @@ go build -ldflags "-s -w"
 ## TODO
 
 1. Add remove-method for exists json fields
+0. Add push mechanism for setting's updates
 0. Add auth
 0. Add unit-tests
 0. Try another DB, for example mongo
-0. Add push mechanism for setting's updates
+0. Appy [project layout](https://github.com/golang-standards/project-layout/tree/master)
+0. dockerize
