@@ -1,0 +1,60 @@
+# get all records
+GET http://localhost:9999/v1/settings HTTP/1.1
+
+###
+
+# get settings for service by name
+GET http://localhost:9999/v1/settings/testService HTTP/1.1
+
+###
+
+# get single field 
+POST http://localhost:9999/v1/settings/testService HTTP/1.1
+
+{
+    "optionPath": "c/ca"
+}
+
+###
+
+# add new service options
+POST http://localhost:9999/v1/settings/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "serviceName": "newService",
+    "options": "{\"a\":\"a1\",\"b\":{\"ba\":\"bbb\"},\"c\":[10,11,12]}"
+}
+
+###
+
+# get settings for service by name "newService"
+GET http://localhost:9999/v1/settings/newService HTTP/1.1
+
+###
+
+# replace options for "newService"
+PUT http://localhost:9999/v1/settings/newService HTTP/1.1
+Content-Type: application/json
+
+{
+    "options": "{\"a\":\"a3\"}"
+}
+
+###
+
+# remove "newService" with options
+DELETE http://localhost:9999/v1/settings/newService HTTP/1.1
+
+###
+
+# change single value in options
+PATCH http://localhost:9999/v1/settings/newService HTTP/1.1
+Content-Type: "application/json"
+
+{
+    "optionValue": "сссссс",
+    "optionPath": "b/ba"
+}
+
+###

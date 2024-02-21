@@ -1,0 +1,381 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Сервис управления настройками информационной системы ГИСОГД",
+        "title": "Settings service API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "basePath": "/v1",
+    "paths": {
+        "/settings": {
+            "get": {
+                "description": "Get all service settings JSON as map",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get all service settings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/": {
+            "post": {
+                "description": "Add complete settings for new service as string by service name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Add complete settings",
+                "parameters": [
+                    {
+                        "description": "Options DTO",
+                        "name": "options",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.NewOptionsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/{serviceName}": {
+            "get": {
+                "description": "Get service settings JSON as string by service name",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get service settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service name",
+                        "name": "serviceName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Completely replace service settings by service name",
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Replace service settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service name",
+                        "name": "serviceName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Service settings",
+                        "name": "settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ReplaceOptionsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Get service option as string by service name and  option path",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get concrete service option",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service name",
+                        "name": "serviceName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Option path",
+                        "name": "path",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetConcreteOptionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Complete remove service settings by service name",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Complete remove service settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service name",
+                        "name": "serviceName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update value for service settings by settings key",
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Update service settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service name",
+                        "name": "serviceName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Service settings",
+                        "name": "update",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateOptionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.GetConcreteOptionRequest": {
+            "description": "запрос конкретной настройки",
+            "type": "object",
+            "required": [
+                "optionPath"
+            ],
+            "properties": {
+                "optionPath": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.HttpError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Ошибка парсинга"
+                }
+            }
+        },
+        "dto.NewOptionsRequest": {
+            "description": "Создать значение для сервиса",
+            "type": "object",
+            "required": [
+                "options",
+                "serviceName"
+            ],
+            "properties": {
+                "options": {
+                    "description": "Настройки в виде json-строки",
+                    "type": "string",
+                    "example": "{\"a\":\"a3\"}"
+                },
+                "serviceName": {
+                    "description": "Имя сервиса",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ReplaceOptionsRequest": {
+            "description": "Замена настроек",
+            "type": "object",
+            "required": [
+                "options"
+            ],
+            "properties": {
+                "options": {
+                    "type": "string",
+                    "example": "{\"c\":\"ca\"}"
+                }
+            }
+        },
+        "dto.UpdateOptionRequest": {
+            "description": "Изменить значение одного поля. Создает поле, если его не существует",
+            "type": "object",
+            "required": [
+                "optionPath",
+                "optionValue"
+            ],
+            "properties": {
+                "optionPath": {
+                    "description": "Поле для изменения",
+                    "type": "string",
+                    "example": "a/b/c/1"
+                },
+                "optionValue": {
+                    "description": "Новое значение",
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
+    }
+}
