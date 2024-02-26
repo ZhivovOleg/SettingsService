@@ -205,7 +205,7 @@ func (c *Controller) UpdateOption(context *gin.Context) {
 	strVal := string(byteVal)
 
 	dbErr := dal.UpdateOptionInDb(&serviceName, &optionPath, &strVal, &requestContext, &c.database)
-	if dbErr != nil {
+	if *dbErr != nil {
 		utils.Logger.Error("Error while update data in DB: " + err.Error())
 		context.String(http.StatusBadRequest, "Error while update data in DB: " + err.Error())
 		return
