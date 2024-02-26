@@ -32,6 +32,20 @@ definitions:
     required:
     - options
     type: object
+  dto.UpdateOptionRequest:
+    description: Изменить значение одного поля. Создает поле, если его не существует
+    properties:
+      optionPath:
+        description: Поле для изменения
+        example: a/b/c/1
+        type: string
+      optionValue:
+        description: Новое значение
+        type: string
+    required:
+    - optionPath
+    - optionValue
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -140,6 +154,34 @@ paths:
       summary: Get service settings
       tags:
       - settings
+    patch:
+      description: Update value for service settings by settings key
+      parameters:
+      - description: Service name
+        in: path
+        name: serviceName
+        required: true
+        type: string
+      - description: Service settings
+        in: body
+        name: update
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateOptionRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.HttpError'
+      summary: Update service settings
+      tags:
+      - settings
     put:
       description: Completely replace service settings by service name
       parameters:
@@ -154,8 +196,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.ReplaceOptionsRequest'
-      produces:
-      - application/json
       responses:
         "200":
           description: OK
@@ -184,8 +224,6 @@ paths:
         name: path
         required: true
         type: string
-      produces:
-      - application/json
       responses:
         "200":
           description: OK
@@ -215,8 +253,6 @@ paths:
         name: path
         required: true
         type: string
-      produces:
-      - application/json
       responses:
         "200":
           description: OK
@@ -231,44 +267,6 @@ paths:
           schema:
             $ref: '#/definitions/dto.HttpError'
       summary: Get concrete service option
-      tags:
-      - settings
-    patch:
-      consumes:
-      - text/plain
-      description: Update value for service settings by settings key. Set value in
-        body with MIME text/plain
-      parameters:
-      - description: Service name
-        in: path
-        name: serviceName
-        required: true
-        type: string
-      - description: Option path
-        in: path
-        name: path
-        required: true
-        type: string
-      - description: Option value
-        in: body
-        name: value
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.HttpError'
-      summary: Update service settings
       tags:
       - settings
 swagger: "2.0"

@@ -20,20 +20,14 @@ const (
 	deleteConcreteOptionQuery string = "UPDATE settings SET settings = settings::jsonb #- '{%s}' WHERE servicename = '%s'"
 )
 
-func GetAllSettingsFromDb(ctx *context.Context) (map[string]string, *error) {
-	result, err := d.execWithTypedReturn(getAllOptionsForAllServicesQuery, ctx)
-
-	if err != nil {
-        return nil, err
-    }
-
-	return *result, nil
+func GetAllSettingsFromDb(ctx *context.Context, db *Orm) (*map[string]string, *error) {
+	return db.execWithTypedReturn(getAllOptionsForAllServicesQuery, ctx)
 }
 
-func GetSettingsFromDb(serviceName *string, ctx *context.Context) (*string, *error) {
+func GetSettingsFromDb(serviceName *string, ctx *context.Context, db *Orm) (*string, *error) {
 	var query string = fmt.Sprintf(getAllOptionsQuery, (*serviceName))
 
-	result, err := d.execWithReturn(query, ctx)
+	result, err := db.execWithReturn(query, ctx)
 
 	if err != nil {
         return nil, err
@@ -42,39 +36,39 @@ func GetSettingsFromDb(serviceName *string, ctx *context.Context) (*string, *err
 	return &(*result)[0], err
 }
 
-func InsertNewOptionsToDb(serviceName *string, options *string, ctx *context.Context) *error {
+func InsertNewOptionsToDb(serviceName *string, options *string, ctx *context.Context, db *Orm) *error {
 	args := pgx.NamedArgs{
     	"serviceName": serviceName,
     	"settings": options,
   	}
 
-	err := d.execWithArgs(insertNewOptionsQuery, &args, ctx)
+	err := db.execWithArgs(insertNewOptionsQuery, &args, ctx)
 
 	return err
 }
 
-func DeleteSettingsFromDb(serviceName *string, ctx *context.Context) *error {
+func DeleteSettingsFromDb(serviceName *string, ctx *context.Context, db *Orm) *error {
 	args := pgx.NamedArgs{
     	"serviceName": serviceName,
   	}
 
-	err := d.execWithArgs(deleteOptionsQuery, &args, ctx)
+	err := db.execWithArgs(deleteOptionsQuery, &args, ctx)
 
 	return err
 }
 
-func ReplaceOptionsInDb(serviceName *string, options *string, ctx *context.Context) *error {
+func ReplaceOptionsInDb(serviceName *string, options *string, ctx *context.Context, db *Orm) *error {
 	args := pgx.NamedArgs{
     	"serviceName": serviceName,
     	"settings": options,
   	}
 
-	err := d.execWithArgs(replaceOptionsQuery, &args, ctx)
+	err := db.execWithArgs(replaceOptionsQuery, &args, ctx)
 
 	return err
 }
 
-func UpdateOptionInDb(serviceName *string, optionPath *string, optionValue *string, ctx *context.Context) error {
+func UpdateOptionInDb(serviceName *string, optionPath *string, optionValue *string, ctx *context.Context, db *Orm) *error {
 	var pgJsonPath string = "{" + strings.ReplaceAll((*optionPath), "/", ",") + "}"
 
 	var q string
@@ -85,17 +79,17 @@ func UpdateOptionInDb(serviceName *string, optionPath *string, optionValue *stri
 		q = fmt.Sprintf(updateOptionQuery, pgJsonPath, "\"" + *optionValue + "\"", *serviceName)
 	}
 
-	err := d.exec(q, ctx)
-	
-	return *err
+	err := db.exec(q, ctx)
+
+	return err
 }
 
-func GetConcreteOptionFromDb(serviceName *string, optionPath *string, ctx *context.Context) (*string, *error) {
+func GetConcreteOptionFromDb(serviceName *string, optionPath *string, ctx *context.Context, db *Orm) (*string, *error) {
 	var pgJsonPath string = "'" + strings.ReplaceAll((*optionPath), ",", "'->'") + "'"
 
 	var query string = fmt.Sprintf(getConcreteOptionQuery, pgJsonPath, (*serviceName))
 	
-	queryResult, err := d.execWithReturn(query, ctx)
+	queryResult, err := db.execWithReturn(query, ctx)
 
 	if err != nil {
 		return nil, err
@@ -108,8 +102,8 @@ func GetConcreteOptionFromDb(serviceName *string, optionPath *string, ctx *conte
 	return &result, nil
 }
 
-func DeleteConcreteOptionFromDb(serviceName *string, optionPath *string, ctx *context.Context) *error {
+func DeleteConcreteOptionFromDb(serviceName *string, optionPath *string, ctx *context.Context, db *Orm) *error {
 	var query string = fmt.Sprintf(deleteConcreteOptionQuery, *optionPath, (*serviceName))
-	err := d.exec(query, ctx)
+	err := db.exec(query, ctx)
 	return err
 }

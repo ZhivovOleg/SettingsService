@@ -1,17 +1,14 @@
 package api
 
-import "github.com/gin-gonic/gin"
-
-func v1settingsController(v1router *gin.RouterGroup) {
-	settings := v1router.Group("/settings")
-	settings.GET("/", GetAllOptions)
-	settings.POST("/", NewOption)
+func (c *Controller) initV1settingsController() {
+	c.routerGroup.GET("/", c.GetAllOptions)
+	c.routerGroup.POST("/", c.NewOption)
     
-	settings.GET("/:serviceName", GetOptions)
-	settings.DELETE("/:serviceName", RemoveOptions)
-	settings.PUT("/:serviceName", ReplaceOptions)
-	settings.PATCH("/:serviceName", UpdateOption)
+	c.routerGroup.GET("/:serviceName", c.GetOptions)
+	c.routerGroup.DELETE("/:serviceName", c.RemoveOptions)
+	c.routerGroup.PUT("/:serviceName", c.ReplaceOptions)
 
-    settings.GET("/:serviceName/:path", GetConcreteOption)
-	settings.DELETE("/:serviceName/:path", DeleteConcreteOption)
+    c.routerGroup.GET("/:serviceName/:path", c.GetConcreteOption)
+	c.routerGroup.DELETE("/:serviceName/:path", c.DeleteConcreteOption)
+	c.routerGroup.PATCH("/:serviceName/:path", c.UpdateOption)
 }

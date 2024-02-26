@@ -2,12 +2,13 @@ package api
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"strings"
 
-	"gisogd/SettingsService/dal"
-	"gisogd/SettingsService/dto"
-	"gisogd/SettingsService/utils"
+	"gisogd/SettingsService/internal/dal"
+	"gisogd/SettingsService/internal/dto"
+	"gisogd/SettingsService/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,10 +21,10 @@ import (
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings [get]
-func GetAllOptions(context *gin.Context) {
+func (c *Controller) GetAllOptions(context *gin.Context) {
 	requestContext := context.Request.Context()
 
-	servicesSettings, err := dal.GetAllSettingsFromDb(&requestContext)
+	servicesSettings, err := dal.GetAllSettingsFromDb(&requestContext, &c.database)
 	
 	if err != nil {
 		utils.Logger.Error("Error on getting data from DB: " + (*err).Error())
@@ -43,7 +44,7 @@ func GetAllOptions(context *gin.Context) {
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings/{serviceName} [get]
-func GetOptions(context *gin.Context) {
+func (c *Controller) GetOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
 	if serviceName == "" {
 		utils.Logger.Error("Argument error: Service name not found")
@@ -52,7 +53,7 @@ func GetOptions(context *gin.Context) {
 	}
 
 	requestContext := context.Request.Context()
-	serviceSetting, err := dal.GetSettingsFromDb(&serviceName, &requestContext)
+	serviceSetting, err := dal.GetSettingsFromDb(&serviceName, &requestContext, &c.database)
 	
 	if err != nil {
 		utils.Logger.Error("Error on getting data from DB: " + (*err).Error())
@@ -73,7 +74,7 @@ func GetOptions(context *gin.Context) {
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings [post]
-func NewOption(context *gin.Context) {
+func (c *Controller) NewOption(context *gin.Context) {
 	var requestBody dto.NewOptionsRequest
 	err := json.NewDecoder(context.Request.Body).Decode(&requestBody)
 
@@ -83,7 +84,7 @@ func NewOption(context *gin.Context) {
 	}
 
 	requestContext := context.Request.Context()
-	insertErr := dal.InsertNewOptionsToDb(&requestBody.ServiceName, &requestBody.Options, &requestContext)
+	insertErr := dal.InsertNewOptionsToDb(&requestBody.ServiceName, &requestBody.Options, &requestContext, &c.database)
 
 	if insertErr != nil {
 		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + err.Error())
@@ -102,7 +103,7 @@ func NewOption(context *gin.Context) {
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings/{serviceName}  [delete]
-func RemoveOptions(context *gin.Context) {
+func (c *Controller) RemoveOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
 	if serviceName == "" {
 		context.String(http.StatusBadRequest, "Argument error: Service name not found")
@@ -111,7 +112,7 @@ func RemoveOptions(context *gin.Context) {
 
 	requestContext := context.Request.Context()
 
-	err := dal.DeleteSettingsFromDb(&serviceName, &requestContext)
+	err := dal.DeleteSettingsFromDb(&serviceName, &requestContext, &c.database)
 	
 	if err != nil {
 		context.String(http.StatusInternalServerError, "Не удалось удалить настройки: " + (*err).Error())
@@ -124,13 +125,14 @@ func RemoveOptions(context *gin.Context) {
 //	@Summary		Replace service settings
 //	@Description	Completely replace service settings by service name
 //	@Tags			settings
+//	@Produce		application/json
 //	@Param			serviceName		path	string						true	"Service name"
 //	@Param			settings		body	dto.ReplaceOptionsRequest	true	"Service settings"
 //	@Success		200
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings/{serviceName}  [put]
-func ReplaceOptions(context *gin.Context) {
+func (c *Controller) ReplaceOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
 	if serviceName == "" {
 		
@@ -147,7 +149,7 @@ func ReplaceOptions(context *gin.Context) {
 	}
 
 	requestContext := context.Request.Context()
-	updateErr := dal.ReplaceOptionsInDb(&serviceName, &requestBody.Options, &requestContext)
+	updateErr := dal.ReplaceOptionsInDb(&serviceName, &requestBody.Options, &requestContext, &c.database)
 	
 	if updateErr != nil {
 		context.String(http.StatusInternalServerError, "Error on insert data to DB: " + err.Error())
@@ -157,16 +159,27 @@ func ReplaceOptions(context *gin.Context) {
 	context.Status(http.StatusOK)
 }
 
+/* ----------------- SINGLE FIELD OPERATIONS -------------------- */
+
 //	@Summary		Update service settings
-//	@Description	Update value for service settings by settings key
+//	@Description	Update value for service settings by settings key. Set value in body with MIME text/plain
 //	@Tags			settings
-//	@Param			serviceName		path	string						true	"Service name"
-//	@Param			update			body	dto.UpdateOptionRequest		true	"Service settings"
+// 	@Accept			text/plain
+//	@Produce		application/json
+//	@Param			serviceName		path	string	true	"Service name"
+//	@Param			path			path	string	true	"Option path"
+//	@Param			value			body	string	true	"Option value"
 //	@Success		200
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
-//	@Router			/settings/{serviceName}  [patch]
-func UpdateOption(context *gin.Context) {
+//	@Router			/settings/{serviceName}/{path}  [patch]
+func (c *Controller) UpdateOption(context *gin.Context) {
+	if mime := context.ContentType(); mime != "text/plain" {
+		utils.Logger.Error("Request error: invalid MIME")
+		context.String(http.StatusBadRequest, "Request error: invalid MIME")
+		return
+	}
+
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
 	if serviceName == "" {
 		utils.Logger.Error("Argument error: Service name not found")
@@ -174,18 +187,25 @@ func UpdateOption(context *gin.Context) {
 		return
 	}
 
-	requestContext := context.Request.Context()
-
-	var requestBody dto.UpdateOptionRequest
-	err := json.NewDecoder(context.Request.Body).Decode(&requestBody)
-	if err != nil {
-		utils.Logger.Error("Error on getting arguments from request body: " + err.Error())
-		context.String(http.StatusBadRequest, "Error on getting arguments from request body: " + err.Error())
+	optionPath := strings.Trim(context.Param("path"), "/")
+	if optionPath == "" {
+		utils.Logger.Error("Argument error: option path not found")
+		context.String(http.StatusBadRequest, "Argument error: option path not found")
 		return
 	}
 
-	err = dal.UpdateOptionInDb(&serviceName, &requestBody.OptionPath, &requestBody.OptionValue, &requestContext)
+	requestContext := context.Request.Context()
+
+	byteVal, err := io.ReadAll(context.Request.Body)
 	if err != nil {
+		utils.Logger.Error("Error on getting value from request body: " + err.Error())
+		context.String(http.StatusBadRequest, "Error on getting value from request body: " + err.Error())
+		return
+	}
+	strVal := string(byteVal)
+
+	dbErr := dal.UpdateOptionInDb(&serviceName, &optionPath, &strVal, &requestContext, &c.database)
+	if dbErr != nil {
 		utils.Logger.Error("Error while update data in DB: " + err.Error())
 		context.String(http.StatusBadRequest, "Error while update data in DB: " + err.Error())
 		return
@@ -196,15 +216,15 @@ func UpdateOption(context *gin.Context) {
 //	@Summary		Get concrete service option
 //	@Description	Get service option as string by service name and option path
 //	@Tags			settings
+//	@Produce		application/json
 //	@Param			serviceName		path		string	true	"Service name"
 //	@Param			path			path		string	true	"Option path, comma-separated keys"
 //	@Success		200	{object}	string
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings/{serviceName}/{path} [get]
-func GetConcreteOption(context *gin.Context) {
+func (c *Controller) GetConcreteOption(context *gin.Context) {
 	serviceName := context.Param("serviceName")
-
 	if serviceName == "" {
 		utils.Logger.Error("Argument error: Service name not found")
 		context.String(http.StatusBadRequest, "Argument error: Service name not found")
@@ -212,7 +232,6 @@ func GetConcreteOption(context *gin.Context) {
 	}
 
 	optionPath := context.Param("path")
-
 	if optionPath == "" {
 		utils.Logger.Error("Argument error: option path not found")
 		context.String(http.StatusBadRequest, "Argument error: option path not found")
@@ -220,7 +239,7 @@ func GetConcreteOption(context *gin.Context) {
 	}
 
 	requestContext := context.Request.Context()
-	serviceSetting, serviceErr := dal.GetConcreteOptionFromDb(&serviceName, &optionPath, &requestContext)
+	serviceSetting, serviceErr := dal.GetConcreteOptionFromDb(&serviceName, &optionPath, &requestContext, &c.database)
 	
 	if serviceErr != nil {
 		utils.Logger.Error("Error on getting data from DB: " + (*serviceErr).Error())
@@ -234,13 +253,14 @@ func GetConcreteOption(context *gin.Context) {
 //	@Summary		Delete concrete service option
 //	@Description	Delete service option by service name and option path
 //	@Tags			settings
+//	@Produce		application/json
 //	@Param			serviceName		path		string	true	"Service name"
 //	@Param			path			path		string	true	"Option path, comma-separated keys"
 //	@Success		200	{object}	string
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings/{serviceName}/{path} [delete]
-func DeleteConcreteOption(context *gin.Context) {
+func (c *Controller) DeleteConcreteOption(context *gin.Context) {
 	serviceName := context.Param("serviceName")
 
 	if serviceName == "" {
@@ -258,7 +278,7 @@ func DeleteConcreteOption(context *gin.Context) {
 	}
 
 	requestContext := context.Request.Context()
-	serviceErr := dal.DeleteConcreteOptionFromDb(&serviceName, &optionPath, &requestContext)
+	serviceErr := dal.DeleteConcreteOptionFromDb(&serviceName, &optionPath, &requestContext, &c.database)
 	
 	if serviceErr != nil {
 		utils.Logger.Error("Error on getting data from DB: " + (*serviceErr).Error())

@@ -3,48 +3,48 @@ package dal
 import (
 	"context"
 	"fmt"
-	"gisogd/SettingsService/options"
+	"gisogd/SettingsService/internal/options"
+	"gisogd/SettingsService/internal/utils"
 	"sync"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type db struct {
+type Orm struct {
 	pool *pgxpool.Pool
 	locker *sync.Once
 	isInited bool
 }
 
-var d *db
-
-func InitPool() (*pgxpool.Pool, *error) {
-	d = new(db)
-	d.isInited = false
-	d.locker = new(sync.Once)
+func (o *Orm) Init(connString string) error {
+	o.isInited = false
+	o.locker = new(sync.Once)
 
 	var initPoolerr error
-	d.locker.Do(func() {
+	o.locker.Do(func() {
 		pool, err := pgxpool.New(context.Background(), *options.ServiceSetting.DbConnectionString)
 
 		if err != nil {
-			d.isInited = false
+			o.isInited = false
 			initPoolerr = fmt.Errorf("Can't init database pool: " + err.Error())
 			return
 		}		
-		d.pool = pool
-		d.isInited = true
-	})
 
-	if initPoolerr != nil {
-		return nil, &initPoolerr
-	}
-	return d.pool, nil
+		pingDbErr := pool.Ping(context.Background())	
+		if pingDbErr != nil {
+			utils.Logger.Error("Can't connect with database: " + pingDbErr.Error())
+			panic("Can't connect with database: " + pingDbErr.Error())
+		}
+
+		o.pool = pool
+		o.isInited = true
+	})
+	return initPoolerr
 }
 
-func (d *db) execWithReturn(query string, ctx *context.Context) (*[]string, *error) {
-	//d.initPool()
-	rows, err := d.pool.Query(*ctx, query)
+func (o *Orm) execWithReturn(query string, ctx *context.Context) (*[]string, *error) {
+	rows, err := o.pool.Query(*ctx, query)
 	
 	if err != nil {
 		return nil, &err
@@ -74,8 +74,8 @@ func (d *db) execWithReturn(query string, ctx *context.Context) (*[]string, *err
 	return &result, nil
 }
 
-func (d *db) execWithArgs(query string, args *pgx.NamedArgs, ctx *context.Context) *error {
-	_, err := d.pool.Exec(*ctx, query, *args)
+func (o *Orm) execWithArgs(query string, args *pgx.NamedArgs, ctx *context.Context) *error {
+	_, err := o.pool.Exec(*ctx, query, *args)
 	
 	if err != nil {
 		return &err
@@ -84,8 +84,8 @@ func (d *db) execWithArgs(query string, args *pgx.NamedArgs, ctx *context.Contex
 	return nil
 }
 
-func (d *db) exec(query string, ctx *context.Context) *error {
-	_, err := d.pool.Exec(*ctx, query)
+func (o *Orm) exec(query string, ctx *context.Context) *error {
+	_, err := o.pool.Exec(*ctx, query)
 	
 	if err != nil {
 		return &err
@@ -94,8 +94,8 @@ func (d *db) exec(query string, ctx *context.Context) *error {
 	return nil
 }
 
-func (d *db) execWithTypedReturn(query string, ctx *context.Context) (*map[string]string, *error) {
-	rows, err := d.pool.Query(*ctx, query)
+func (o *Orm) execWithTypedReturn(query string, ctx *context.Context) (*map[string]string, *error) {
+	rows, err := o.pool.Query(*ctx, query)
 	
 	if err != nil {
 		return nil, &err

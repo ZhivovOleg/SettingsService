@@ -1,9 +1,7 @@
 package api
 
 import (
-	"fmt"
 	"gisogd/SettingsService/docs"
-	"gisogd/SettingsService/options"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -12,7 +10,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func InitApi() {
+func InitApi(port string, dbConnStr string) {
 
 	docs.SwaggerInfo.Schemes = []string{"http"}
 
@@ -22,12 +20,14 @@ func InitApi() {
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"POST,PATCH,PUT,GET,DELETE"},
-		AllowHeaders:     []string{"Content-Type", "Content-Length", "Accept-Encoding", "Authorization", "Cache-Control"},
+		AllowHeaders:     []string{"Content-Type", "Accept-Encoding", "Authorization", "Cache-Control"},
 		MaxAge:           time.Hour,
 	}))
-
-	v1settingsController(router.Group("/v1"))
 	
+	settingsController := &Controller{}
+	settingsController.InitController(router.Group("/v1"), "settings", dbConnStr)
+	settingsController.initV1settingsController()
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-    router.Run(fmt.Sprintf("localhost:%s", (*options.ServiceSetting.Port)))
+    router.Run("localhost:" + port)
 }

@@ -130,9 +130,6 @@ const docTemplate = `{
             },
             "put": {
                 "description": "Completely replace service settings by service name",
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "settings"
                 ],
@@ -208,14 +205,53 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "description": "Update value for service settings by settings key",
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Update service settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service name",
+                        "name": "serviceName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Service settings",
+                        "name": "update",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateOptionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.HttpError"
+                        }
+                    }
+                }
             }
         },
         "/settings/{serviceName}/{path}": {
             "get": {
                 "description": "Get service option as string by service name and option path",
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "settings"
                 ],
@@ -259,9 +295,6 @@ const docTemplate = `{
             },
             "delete": {
                 "description": "Delete service option by service name and option path",
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "settings"
                 ],
@@ -288,61 +321,6 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "description": "Update value for service settings by settings key. Set value in body with MIME text/plain",
-                "consumes": [
-                    "text/plain"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "settings"
-                ],
-                "summary": "Update service settings",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Service name",
-                        "name": "serviceName",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Option path",
-                        "name": "path",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Option value",
-                        "name": "value",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -403,6 +381,25 @@ const docTemplate = `{
                 "options": {
                     "type": "string",
                     "example": "{\"c\":\"ca\"}"
+                }
+            }
+        },
+        "dto.UpdateOptionRequest": {
+            "description": "Изменить значение одного поля. Создает поле, если его не существует",
+            "type": "object",
+            "required": [
+                "optionPath",
+                "optionValue"
+            ],
+            "properties": {
+                "optionPath": {
+                    "description": "Поле для изменения",
+                    "type": "string",
+                    "example": "a/b/c/1"
+                },
+                "optionValue": {
+                    "description": "Новое значение",
+                    "type": "string"
                 }
             }
         }

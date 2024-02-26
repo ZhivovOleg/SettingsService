@@ -36,7 +36,7 @@ For another IDE's don't forget set up env variable `"SettingsServiceEnv": "dev"`
 
 0. After changes regenerate swagger files:
     ```bash
-    $HOME/go/bin/swag init
+    swag init -g ./cmd/SettingsService/main.go -o ./docs
     ```
 
 ## Production 
@@ -48,9 +48,15 @@ go build -ldflags "-s -w"
 
 ## TODO
 
-1. Add push mechanism for setting's updates
+1. makefile
+0. dockerize 
+0. Add push mechanism for setting's updates
 0. Add auth
 0. Add unit-tests
 0. Try another DB, for example mongo
-0. Appy [project layout](https://github.com/golang-standards/project-layout/tree/master)
-0. dockerize
+0. 
+
+## fixes
+
+1. Appy [project layout](https://github.com/golang-standards/project-layout/tree/master)
+0. 
