@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "type": "shell",
+    "cwd": "${workspaceFolder}",
+    "problemMatcher": [
+        "$go"
+    ],
+    "presentation": {
+        "clear": true,
+        "reveal": "silent",
+    },
+    "tasks": [
+        {
+            "label": "dev build",
+            "group": "build",
+            "command": "go",
+            "args": [
+                "build",
+                "-v",
+                "-x",
+                "-gcflags='all=-N -l'",
+                "-ldflags='-extldflags=-static'",
+                "-o=output",
+                "./cmd/SettingsService"
+            ],
+        } /*,
+        {
+            "label": "post debug",
+            "command": "cd",
+            "args": [
+                "${workspaceFolder}"
+            ]
+        } */
+    ],
+}

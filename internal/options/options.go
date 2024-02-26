@@ -5,11 +5,6 @@ import (
 	"os"
 )
 
-type Options struct {
-	Port *string
-	DbConnectionString *string
-}
-
 var ServiceSetting *Options = new(Options)
 
 func InitSettings() *error {
@@ -17,7 +12,7 @@ func InitSettings() *error {
 	dbConnectionString, dbConnectionStringOk := os.LookupEnv("SettingsServiceDbConnectionString")	
 
 	if !portExistsOk || !dbConnectionStringOk {
-		settings, err := readAppsettingsFile("appSettings.json")
+		settings, err := readAppsettingsFile("configs/appSettings.json")
 
 		if err != nil {
 			err := fmt.Errorf("Не удалось получить настройки приложения: " + err.Error())
@@ -25,8 +20,8 @@ func InitSettings() *error {
 		}
 
 		//TODO: читать файл настроек, если не найдены какие либо настройки 
-		port = fmt.Sprintf("%v", settings["SettingsServicePort"])
-		dbConnectionString = fmt.Sprintf("%v", settings["SettingsServiceDbConnectionString"])
+		port = *settings.Port
+		dbConnectionString = *settings.DbConnectionString
 	}
 
 	ServiceSetting.Port = &port

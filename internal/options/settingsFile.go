@@ -3,24 +3,25 @@ package options
 import (
 	"encoding/json"
 	"errors"
-	"io"
 	"os"
 )
 
-func readAppsettingsFile(filename string) (map[string]interface{}, error) {
+type Options struct {
+	Port *string				`json:"port"`
+	DbConnectionString *string	`json:"dbConnectionString"`
+}
+
+func readAppsettingsFile(filename string) (*Options, error) {
 	if _, err := os.Stat(filename); err == nil {
-		jsonFile, err := os.Open(filename)
-		
+		jsonFile, err := os.Open(filename)		
 		if err != nil {
 			return nil, errors.New("Ошибка при открытии файла настроек приложения:" + err.Error())
-		}
-		
+		}		
 		defer jsonFile.Close()
 
-		byteValue, _ := io.ReadAll(jsonFile)
-
-		var result map[string]interface{}
-		json.Unmarshal([]byte(byteValue), &result)
+		result := &Options{}
+		jsonParser := json.NewDecoder(jsonFile)
+		jsonParser.Decode(&result)
 
 		return result, nil
 	} else if errors.Is(err, os.ErrNotExist) {

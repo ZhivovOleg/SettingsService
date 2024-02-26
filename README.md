@@ -43,20 +43,38 @@ For another IDE's don't forget set up env variable `"SettingsServiceEnv": "dev"`
 
 build with remove the symbol and debug info:
 ```bash
-go build -ldflags "-s -w"
+go build -o=SettingsService -ldflags "-s -w" ./cmd/SettingsService
+```
+where:
+- `-w` turns off DWARF debugging information
+- `-s` turns off generation of the Go symbol table
+
+or use `Makefile` run for your platform:
+```bash
+make version="1.0.0" build-mac
+```
+or 
+```bash
+make version="1.0.0" build-lin
+```
+or
+```bash
+make version="1.0.0" build-win
 ```
 
 ## TODO
 
-1. makefile
-0. dockerize 
+1. dockerize 
 0. Add push mechanism for setting's updates
 0. Add auth
 0. Add unit-tests
 0. Try another DB, for example mongo
+0. Write help instructions
 0. 
 
-## fixes
+## Closed fixes
 
 1. Appy [project layout](https://github.com/golang-standards/project-layout/tree/master)
+0. makefile
+0. versioning
 0. 
