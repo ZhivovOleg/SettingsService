@@ -9,6 +9,7 @@ import (
 
 var Logger *zap.Logger
 
+// Init ZAP logger
 func InitializeLogger() {
 	config := zap.NewProductionEncoderConfig()
 	config.EncodeTime = zapcore.ISO8601TimeEncoder

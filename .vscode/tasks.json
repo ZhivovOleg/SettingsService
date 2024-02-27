@@ -23,13 +23,13 @@
                 "-o=output",
                 "./cmd/SettingsService"
             ],
-        } /*,
+        },
         {
             "label": "post debug",
             "command": "cd",
             "args": [
                 "${workspaceFolder}"
             ]
-        } */
+        }
     ],
 }

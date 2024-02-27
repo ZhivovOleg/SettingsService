@@ -7,13 +7,13 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceRoot}/cmd/SettingsService",
-            "console": "integratedTerminal",
+            "console": "internalConsole",
             "env": {
                 "SettingsServicePort": "9999",
                 "SettingsServiceDbConnectionString": "postgres://pg:1@localhost:5432/servicesSettings_db",
                 "SettingsServiceEnv": "dev"
             },
-            //"postDebugTask": "post debug",
+            "postDebugTask": "post debug",
             "cwd": "${workspaceRoot}"
         },
         { /* Debug Exec (faster launch) + visible build output in terminal */

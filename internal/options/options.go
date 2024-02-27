@@ -19,7 +19,6 @@ func InitSettings() *error {
 			return &err
 		}
 
-		//TODO: читать файл настроек, если не найдены какие либо настройки 
 		port = *settings.Port
 		dbConnectionString = *settings.DbConnectionString
 	}
