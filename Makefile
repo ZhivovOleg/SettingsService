@@ -1,10 +1,27 @@
+current_os := $$(go env GOOS)
+current_arch := $$(go env GOARCH)
+
+ifeq ($(MAKECMDGOALS),)
 ifndef version
-ifneq ($(MAKECMDGOALS),help)
-ifneq ($(MAKECMDGOALS),audit)
-ifneq ($(MAKECMDGOALS),swag)
+override version := 0.0.0
+endif
+endif
+
+ifeq ($(MAKECMDGOALS),mac)
+ifndef version
 $(error ERROR: 'version' flag must be defined)
 endif
 endif
+
+ifeq ($(MAKECMDGOALS),win)
+ifndef version
+$(error ERROR: 'version' flag must be defined)
+endif
+endif
+
+ifeq ($(MAKECMDGOALS),lin)
+ifndef version
+$(error ERROR: 'version' flag must be defined)
 endif
 endif
 
@@ -15,14 +32,24 @@ TARGET_OS := linux
 TARGET_ARCH := amd64
 SUFFIX := 
 
+.PHONY: default
+default: TARGET_OS := ${current_os}
+default: TARGET_ARCH := ${current_arch}
+default: build
+
 ## help: print this help message
 .PHONY: help
 help:
 	@echo
 	@echo '    Usage:'
 	@echo
-	@echo '    make [help, audit, swag]'
+	@echo '    make'
+	@echo '    make version=<version number>'
+	@echo '    make [help, audit, swag, dep]'
 	@echo '    make version=<version number> [lin, win, mac]'
+	@echo
+	@echo '  without params :: build project for current platform vith version 0.0.0'
+	@echo '  version=<version number> :: build project for current platform vith version <version number>'
 	@echo
 	@echo '    Command list:'
 	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
@@ -51,9 +78,6 @@ audit:
 #	@echo
 #	go test -race -buildvcs -vet=off ./...
 
-.PHONY: all
-all: lin
-
 ## lin: build project for linux_x64 
 .PHONY: lin
 lin: TARGET_OS := linux
@@ -77,5 +101,30 @@ swag:
 	go run github.com/swaggo/swag/cmd/swag@latest init -g cmd/SettingsService/main.go -o docs
 
 .PHONY: build
-build: swag
+build: clean front swag 
 	GOOS=${TARGET_OS} GOARCH=${TARGET_ARCH} go build -o ./bin/${TARGET_OS}-${TARGET_ARCH}/${version}/SettingsService${SUFFIX} -ldflags "-s -w -X main.Version=${version}" ${MAIN_PACKAGE_PATH}
+
+## front: build Vue SPA
+.PHONY: front
+front: clean-front
+	(cd ./web/src/ && npm install && npm run build)
+
+## dep: install dependencies for Vue(front) and Go(back) projects
+.PHONY: dep
+dep:
+	@go mod .
+	@(cd ./web/src/ && npm install)
+
+.PHONY: clean-front
+clean-front:
+	@rm -rf ./web/assets
+	@rm -rf ./web/index.html
+	@rm -rf ./web/logo.svg
+
+.PHONY: clean-back
+clean-back:
+	@rm -rf ./bin
+
+## clean: remove all artifacts
+.PHONY: clean
+clean: clean-front clean-back

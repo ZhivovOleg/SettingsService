@@ -5,14 +5,24 @@ Self-learning Golang project.
 Store and managing settings for microservices.
 
 ## Used packages
+
+### backend:
+Golang
 - [go-gin webserver](https://github.com/gin-gonic/gin)
 - [gin-swagger](https://github.com/swaggo/gin-swagger)
 - [pgx - PostgreSQL Driver](https://github.com/jackc/pgx)
 - [pgxpool](https://pkg.go.dev/github.com/jackc/pgx/v4/pgxpool)
 - [zap logger](https://github.com/uber-go/zap)
 
+### frontend
+Vue
+- [Pinia state management](https://github.com/vuejs/pinia)
+- [vue3-notification](https://github.com/kyvg/vue3-notification)
+- [vanilla-jsoneditor](https://github.com/josdejong/svelte-jsoneditor)
+- [tailwindcss](https://github.com/tailwindlabs/tailwindcss)
+- [axios](https://github.com/axios/axios)
 
-## Develop & Debug & Test
+## Develop
  
 Recommended IDE - VSCode.
 <br />
@@ -20,8 +30,24 @@ Environment for project in `./.vscode/launch.json`.
 <br />
 For another IDE's don't forget set up env variable `"SettingsServiceEnv": "dev"`.
 
-1. [Install Go](https://go.dev/dl/)
-0. Install golang `swag` utility:
+### Requiremens
+1. [Go](https://go.dev/dl/)
+0. [Node](https://nodejs.org/en/download)
+
+### Recommended extentions for VSCode
+1. [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
+0. [Go](https://marketplace.visualstudio.com/items?itemName=golang.Go)
+0. [npm Intellisense](https://marketplace.visualstudio.com/items?itemName=christian-kohler.npm-intellisense)
+0. [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
+0. [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
+0. [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) 
+> ! disable Vetur
+
+## Debug & Test
+
+### Debug backend
+
+1. Install golang `swag` utility:
     ```bash
     go install github.com/swaggo/swag/cmd/swag@latest
     ```
@@ -38,28 +64,33 @@ For another IDE's don't forget set up env variable `"SettingsServiceEnv": "dev"`
     ```bash
     swag init -g ./cmd/SettingsService/main.go -o ./docs
     ```
+0. Set breakpoints and press `F5`
+
+### Debug frontend
+
+1. Install node
+
+0. Move to `./web/src`
+
+0. Install dependencies `npm install`
+
+0. `npm run dev`
+
 
 ## Production 
 
 build with remove the symbol and debug info:
 ```bash
 go build -o=SettingsService -ldflags "-s -w" ./cmd/SettingsService
+(cd ./web/src/ && npm install && npm run build)
 ```
 where:
 - `-w` turns off DWARF debugging information
 - `-s` turns off generation of the Go symbol table
 
-or use `Makefile` run for your platform:
+or use `Makefile`:
 ```bash
-make version="1.0.0" build-mac
-```
-or 
-```bash
-make version="1.0.0" build-lin
-```
-or
-```bash
-make version="1.0.0" build-win
+make help
 ```
 
 ## TODO
@@ -77,4 +108,4 @@ make version="1.0.0" build-win
 1. Appy [project layout](https://github.com/golang-standards/project-layout/tree/master)
 0. makefile
 0. versioning
-0. 
+0. SPA

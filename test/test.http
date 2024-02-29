@@ -1,19 +1,19 @@
 ############## ALL SERVICES OPERATIONS #################
 
 # get all records
-GET http://localhost:9999/v1/settings HTTP/1.1
+GET http://localhost:9999/api/v1/settings HTTP/1.1
 
 ###
 
 ############## SINGLE SERVICE OPERATIONS #################
 
 # get settings for service by name
-GET http://localhost:9999/v1/settings/testService HTTP/1.1
+GET http://localhost:9999/api/v1/settings/testService HTTP/1.1
 
 ###
 
 # add new service options
-POST http://localhost:9999/v1/settings/ HTTP/1.1
+POST http://localhost:9999/api/v1/settings/ HTTP/1.1
 Content-Type: application/json
 
 {
@@ -24,12 +24,12 @@ Content-Type: application/json
 ###
 
 # get settings for service by name "newService"
-GET http://localhost:9999/v1/settings/newService HTTP/1.1
+GET http://localhost:9999/api/v1/settings/newService HTTP/1.1
 
 ###
 
 # replace options for "newService"
-PUT http://localhost:9999/v1/settings/newService HTTP/1.1
+PUT http://localhost:9999/api/v1/settings/newService HTTP/1.1
 Content-Type: application/json
 
 {
@@ -39,7 +39,7 @@ Content-Type: application/json
 ###
 
 # remove "newService" with options
-DELETE http://localhost:9999/v1/settings/newService HTTP/1.1
+DELETE http://localhost:9999/api/v1/settings/newService HTTP/1.1
 
 ###
 
@@ -47,7 +47,7 @@ DELETE http://localhost:9999/v1/settings/newService HTTP/1.1
 ############## SINGLE FIELD OPERATIONS #################
 
 # change single value in options
-PATCH http://localhost:9999/v1/settings/newService/b,ba HTTP/1.1
+PATCH http://localhost:9999/api/v1/settings/newService/b,ba HTTP/1.1
 Content-Type: text/plain
 
 cccccccc
@@ -55,11 +55,11 @@ cccccccc
 ###
 
 # get single field 
-GET http://localhost:9999/v1/settings/testService/c,ca HTTP/1.1
+GET http://localhost:9999/api/v1/settings/testService/c,ca HTTP/1.1
 
 ###
 
 # delete single field 
-DELETE http://localhost:9999/v1/settings/testService/d,1 HTTP/1.1
+DELETE http://localhost:9999/api/v1/settings/testService/d,1 HTTP/1.1
 
 ###
