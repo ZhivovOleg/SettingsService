@@ -87,7 +87,7 @@ func (c *Controller) NewOption(context *gin.Context) {
 	insertErr := dal.InsertNewOptionsToDb(&requestBody.ServiceName, &requestBody.Options, &requestContext, &c.database)
 
 	if insertErr != nil {
-		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + err.Error())
+		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + (*insertErr).Error())
 		return
 	}
 	
@@ -152,7 +152,7 @@ func (c *Controller) ReplaceOptions(context *gin.Context) {
 	updateErr := dal.ReplaceOptionsInDb(&serviceName, &requestBody.Options, &requestContext, &c.database)
 	
 	if updateErr != nil {
-		context.String(http.StatusInternalServerError, "Error on insert data to DB: " + err.Error())
+		context.String(http.StatusInternalServerError, "Error on insert data to DB: " + (*updateErr).Error())
 		return
 	}
 
@@ -206,8 +206,8 @@ func (c *Controller) UpdateOption(context *gin.Context) {
 
 	dbErr := dal.UpdateOptionInDb(&serviceName, &optionPath, &strVal, &requestContext, &c.database)
 	if dbErr != nil {
-		utils.Logger.Error("Error while update data in DB: " + err.Error())
-		context.String(http.StatusBadRequest, "Error while update data in DB: " + err.Error())
+		utils.Logger.Error("Error while update data in DB: " + (*dbErr).Error())
+		context.String(http.StatusBadRequest, "Error while update data in DB: " + (*dbErr).Error())
 		return
 	}
 	context.Status(http.StatusOK)
