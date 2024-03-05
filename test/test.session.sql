@@ -8,7 +8,7 @@ SELECT settings FROM settings WHERE serviceName = 'testService';
 
 --SELECT * FROM settings;
 
---DELETE from settings WHERE servicename = 'newService';
+DELETE from settings WHERE servicename = '';
 
 --UPDATE settings SET settings = '{"a":"a1"}' WHERE servicename = 'newService';
 

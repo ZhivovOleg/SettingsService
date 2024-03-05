@@ -7,7 +7,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceRoot}/cmd/SettingsService",
-            "console": "internalConsole",
+            "console": "integratedTerminal",
             "env": {
                 "SettingsServicePort": "9999",
                 "SettingsServiceDbConnectionString": "postgres://pg:1@localhost:5432/servicesSettings_db",

@@ -1,35 +1,85 @@
+@baseUrl = http://localhost:9999/api/v1/settings/
+
 ############## ALL SERVICES OPERATIONS #################
 
 # get all records
-GET http://localhost:9999/api/v1/settings HTTP/1.1
+GET {{baseUrl}} HTTP/1.1
+
+###
+
+# add new service options multiline-string
+POST {{baseUrl}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "serviceName": "multiline string",
+    "options": "{
+        \"a\":\"a1\",
+        \"b\": {
+            \"ba\":\"bbb\"
+        },
+        \"c\":[
+            10,
+            11,
+            12
+        ]
+    }"
+}
+
+###
+
+# add new service options one-string
+POST {{baseUrl}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "serviceName": "oneline string",
+    "options": "{\"a\":\"a1\",\"b\": {\"ba\":\"bbb\"},\"c\":[10,11,12]}"
+}
+
+###
+
+# add new service options json
+POST {{baseUrl}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "serviceName": "json",
+    "options": {
+        "a":"a1",
+        "b": {
+            "ba":"bbb"
+        },
+        "c":[10,11,12]
+    }
+}
+
+###
+
+# add public settings
+POST {{baseUrl}} HTTP/1.1
+Content-Type: application/json
+
+< ./publicOptionsExample.json
 
 ###
 
 ############## SINGLE SERVICE OPERATIONS #################
 
 # get settings for service by name
-GET http://localhost:9999/api/v1/settings/testService HTTP/1.1
+GET {{baseUrl}}testService HTTP/1.1
 
 ###
-
-# add new service options
-POST http://localhost:9999/api/v1/settings/ HTTP/1.1
-Content-Type: application/json
-
-{
-    "serviceName": "newService",
-    "options": "{\"a\":\"a1\",\"b\":{\"ba\":\"bbb\"},\"c\":[10,11,12]}"
-}
 
 ###
 
 # get settings for service by name "newService"
-GET http://localhost:9999/api/v1/settings/newService HTTP/1.1
+GET {{baseUrl}}newService HTTP/1.1
 
 ###
 
 # replace options for "newService"
-PUT http://localhost:9999/api/v1/settings/newService HTTP/1.1
+PUT {{baseUrl}}newService HTTP/1.1
 Content-Type: application/json
 
 {
@@ -39,7 +89,7 @@ Content-Type: application/json
 ###
 
 # remove "newService" with options
-DELETE http://localhost:9999/api/v1/settings/newService HTTP/1.1
+DELETE {{baseUrl}} HTTP/1.1
 
 ###
 
@@ -47,7 +97,7 @@ DELETE http://localhost:9999/api/v1/settings/newService HTTP/1.1
 ############## SINGLE FIELD OPERATIONS #################
 
 # change single value in options
-PATCH http://localhost:9999/api/v1/settings/newService/b,ba HTTP/1.1
+PATCH {{baseUrl}}newService/b,ba HTTP/1.1
 Content-Type: text/plain
 
 cccccccc
@@ -55,11 +105,11 @@ cccccccc
 ###
 
 # get single field 
-GET http://localhost:9999/api/v1/settings/testService/c,ca HTTP/1.1
+GET {{baseUrl}}testService/c,ca HTTP/1.1
 
 ###
 
 # delete single field 
-DELETE http://localhost:9999/api/v1/settings/testService/d,1 HTTP/1.1
+DELETE {{baseUrl}}testService/d,1 HTTP/1.1
 
 ###

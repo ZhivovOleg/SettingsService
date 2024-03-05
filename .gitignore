@@ -330,8 +330,9 @@ $RECYCLE.BIN/
 
 # ------------- golang ----------------
 
-# ------- end of golang ---------------
-
-RequestSettings.json
+test/*.json
 web/*
 !web/src
+**__debug**
+
+# ----------- end of golang -----------

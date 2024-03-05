@@ -95,7 +95,9 @@ make help
 
 ## TODO
 
-1. dockerize 
+1. fix SPA API paths
+0. fix results of stat analyst
+0. dockerize 
 0. Add push mechanism for setting's updates
 0. Add auth
 0. Add unit-tests
@@ -103,9 +105,10 @@ make help
 0. Write help instructions
 0. 
 
-## Closed fixes
+## History
 
 1. Appy [project layout](https://github.com/golang-standards/project-layout/tree/master)
 0. makefile
 0. versioning
 0. SPA
+0. 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"gisogd/SettingsService/internal/dal"
@@ -34,6 +35,8 @@ func (c *Controller) GetAllOptions(context *gin.Context) {
 
 	context.IndentedJSON(http.StatusOK, servicesSettings)
 }
+
+/* ----------------- SINGLE SERVICE OPERATIONS ------------------ */
 
 //	@Summary		Get service settings
 //	@Description	Get service settings JSON as string by service name
@@ -75,23 +78,53 @@ func (c *Controller) GetOptions(context *gin.Context) {
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings [post]
 func (c *Controller) NewOption(context *gin.Context) {
-	var requestBody dto.NewOptionsRequest
-	err := json.NewDecoder(context.Request.Body).Decode(&requestBody)
+	requestContext := context.Request.Context()
+	defer requestContext.Err()
 
-	if err != nil {
-		context.String(http.StatusBadRequest, "Error on getting arguments from request body: " + err.Error())
+	rawByteVal, bodyErr := io.ReadAll(context.Request.Body)
+
+	if bodyErr != nil {
+		context.String(http.StatusBadRequest, "Unmarshal error: " + bodyErr.Error())
+	}
+	
+	//ni := 0
+	tmpRawByteVal := make([]byte, 0)
+
+	for i:=0; i<len(rawByteVal);i++ {
+		tmpStr := string(rawByteVal[i])
+		if tmpStr == "\n" || tmpStr == "\r" {
+			continue
+		}
+		tmpRawByteVal = append(tmpRawByteVal, rawByteVal[i])
+	}
+
+	res := &dto.BaseRequest{}
+
+	jerr := json.Unmarshal(tmpRawByteVal, &res)
+
+	if jerr != nil {
+		context.String(http.StatusBadRequest, "Unmarshal error: " + jerr.Error())
 		return
 	}
 
-	requestContext := context.Request.Context()
-	insertErr := dal.InsertNewOptionsToDb(&requestBody.ServiceName, &requestBody.Options, &requestContext, &c.database)
+	var resultOpt string
+	serviceName := res.ServiceName
+	options := string(res.Options)
+	unqOptions, unquoteErr := strconv.Unquote(options)
+	if unquoteErr == nil {
+		resultOpt = unqOptions
+	} else {
+		resultOpt = options
+	}
+
+	insertErr := dal.InsertNewOptionsToDb(&serviceName, &resultOpt, &requestContext, &c.database)
 
 	if insertErr != nil {
-		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + (*insertErr).Error())
+		context.String(http.StatusInternalServerError, "Error on set data to DB: " + (*insertErr).Error())
 		return
 	}
 	
-	context.Status(http.StatusOK)
+	context.Status(http.StatusOK)	
 }
 
 //	@Summary		Complete remove service settings

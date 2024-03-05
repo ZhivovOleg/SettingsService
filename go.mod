@@ -6,6 +6,8 @@ require github.com/gin-contrib/cors v1.5.0
 
 require (
 	github.com/gin-contrib/static v1.1.0 // indirect
+	github.com/gin-gonic/contrib v0.0.0-20221130124618-7e01895a63f2 // indirect
+	github.com/go-errors/errors v1.5.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
 )

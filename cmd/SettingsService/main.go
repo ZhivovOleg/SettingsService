@@ -33,10 +33,13 @@ func main() {
 		return
 	}
 
+	var isDebug bool
 	utils.InitializeLogger()
 	if env, _ := os.LookupEnv("SettingsServiceEnv"); env != "dev" {
+		isDebug = false
 		utils.Logger, _ = zap.NewProduction()
 	} else {
+		isDebug = true
 		utils.Logger, _ = zap.NewDevelopment()
 	}
 	defer utils.Logger.Sync()
@@ -48,7 +51,7 @@ func main() {
 		panic("Can't init settings: " + (*initSettingsErr).Error())
 	}
 
-	api.InitApi(*options.ServiceSetting.Port, *options.ServiceSetting.DbConnectionString)
+	api.InitServer(*options.ServiceSetting.Port, *options.ServiceSetting.DbConnectionString, isDebug)
 }
 
 const instructions string = `Rest API for managing microservices settings.
