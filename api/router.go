@@ -18,6 +18,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// InitServer: starts instance of GIN router
 func InitServer(port string, dbConnStr string, isDebug bool) {
 
 	docs.SwaggerInfo.Schemes = []string{"http"}
@@ -44,8 +45,8 @@ func initAPI(router *gin.Engine, dbConnStr string) *gin.Engine {
 	v1 := api.Group("/v1")
 
 	//init settings controller
-	settingsController := &Controller{}
-	settingsController.InitController(v1, "settings", dbConnStr)
+	settingsController := &controller{}
+	settingsController.initController(v1, "settings", dbConnStr)
 	settingsController.initV1settingsController()
 
 	return router

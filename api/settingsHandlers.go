@@ -22,7 +22,7 @@ import (
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings [get]
-func (c *Controller) GetAllOptions(context *gin.Context) {
+func (c *controller) getAllOptions(context *gin.Context) {
 	requestContext := context.Request.Context()
 
 	servicesSettings, err := dal.GetAllSettingsFromDB(&requestContext, &c.database)
@@ -47,7 +47,7 @@ func (c *Controller) GetAllOptions(context *gin.Context) {
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings/{serviceName} [get]
-func (c *Controller) GetOptions(context *gin.Context) {
+func (c *controller) getServiceOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
 	if serviceName == "" {
 		utils.Logger.Error("Argument error: Service name not found")
@@ -77,7 +77,7 @@ func (c *Controller) GetOptions(context *gin.Context) {
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings [post]
-func (c *Controller) NewOption(context *gin.Context) {
+func (c *controller) addServiceOptions(context *gin.Context) {
 	requestContext := context.Request.Context()
 
 	rawByteVal, bodyErr := io.ReadAll(context.Request.Body)
@@ -144,7 +144,7 @@ func (c *Controller) NewOption(context *gin.Context) {
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings/{serviceName}  [delete]
-func (c *Controller) RemoveOptions(context *gin.Context) {
+func (c *controller) deleteServiceWithOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
 	if serviceName == "" {
 		context.JSON(http.StatusBadRequest, "Argument error: Service name not found")
@@ -173,7 +173,7 @@ func (c *Controller) RemoveOptions(context *gin.Context) {
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings/{serviceName}  [put]
-func (c *Controller) ReplaceOptions(context *gin.Context) {
+func (c *controller) replaceServiceOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
 	if serviceName == "" {
 		
@@ -214,7 +214,7 @@ func (c *Controller) ReplaceOptions(context *gin.Context) {
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings/{serviceName}/{path}  [patch]
-func (c *Controller) UpdateOption(context *gin.Context) {
+func (c *controller) updateSingleValue(context *gin.Context) {
 	if mime := context.ContentType(); mime != "text/plain" {
 		utils.Logger.Error("Request error: invalid MIME")
 		context.JSON(http.StatusBadRequest, "Request error: invalid MIME")
@@ -264,7 +264,7 @@ func (c *Controller) UpdateOption(context *gin.Context) {
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings/{serviceName}/{path} [get]
-func (c *Controller) GetConcreteOption(context *gin.Context) {
+func (c *controller) getSingleValue(context *gin.Context) {
 	serviceName := context.Param("serviceName")
 	if serviceName == "" {
 		utils.Logger.Error("Argument error: Service name not found")
@@ -301,7 +301,7 @@ func (c *Controller) GetConcreteOption(context *gin.Context) {
 //	@Failure		400	{object}	dto.HttpError
 //	@Failure		500	{object}	dto.HttpError
 //	@Router			/settings/{serviceName}/{path} [delete]
-func (c *Controller) DeleteConcreteOption(context *gin.Context) {
+func (c *controller) deleteSingleValue(context *gin.Context) {
 	serviceName := context.Param("serviceName")
 
 	if serviceName == "" {
