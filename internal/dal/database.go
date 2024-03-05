@@ -23,7 +23,7 @@ func (o *Orm) Init(connString string) error {
 
 	var initPoolerr error
 	o.locker.Do(func() {
-		pool, err := pgxpool.New(context.Background(), *options.ServiceSetting.DbConnectionString)
+		pool, err := pgxpool.New(context.Background(), *options.ServiceSetting.DBConnectionString)
 
 		if err != nil {
 			o.isInited = false
@@ -31,10 +31,10 @@ func (o *Orm) Init(connString string) error {
 			return
 		}		
 
-		pingDbErr := pool.Ping(context.Background())	
-		if pingDbErr != nil {
-			utils.Logger.Error("Can't connect with database: " + pingDbErr.Error())
-			panic("Can't connect with database: " + pingDbErr.Error())
+		pingDBErr := pool.Ping(context.Background())	
+		if pingDBErr != nil {
+			utils.Logger.Error("Can't connect with database: " + pingDBErr.Error())
+			panic("Can't connect with database: " + pingDBErr.Error())
 		}
 
 		o.pool = pool

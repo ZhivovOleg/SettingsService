@@ -24,7 +24,7 @@ func InitServer(port string, dbConnStr string, isDebug bool) {
 
 	var wg sync.WaitGroup
 	wg.Add(1)
-	serverError := startServer(initApi(initRouter(isDebug), dbConnStr), "localhost:" + port, &wg)
+	serverError := startServer(initAPI(initRouter(isDebug), dbConnStr), "localhost:" + port, &wg)
 	if serverError != nil {
 		utils.Logger.Fatal("Error on start web  server: " + serverError.Error())
 	}
@@ -33,11 +33,11 @@ func InitServer(port string, dbConnStr string, isDebug bool) {
 
 func errorHandler(c *gin.Context, err any) {
 	goErr := errors.Wrap(err, 2)
-	httpResponse := dto.HttpError{Message: "Internal server error: " + goErr.Error(), Code: http.StatusInternalServerError}
+	httpResponse := dto.HTTPError{Message: "Internal server error: " + goErr.Error(), Code: http.StatusInternalServerError}
 	c.AbortWithStatusJSON(500, httpResponse)
 }
 
-func initApi(router *gin.Engine, dbConnStr string) *gin.Engine {
+func initAPI(router *gin.Engine, dbConnStr string) *gin.Engine {
 	api := router.Group("/api")
 
 	//init version

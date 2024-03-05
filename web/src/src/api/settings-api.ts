@@ -40,6 +40,5 @@ export const settingsAPI = {
         } catch (err) {
             handleError(err)
         }
-
     },
 }

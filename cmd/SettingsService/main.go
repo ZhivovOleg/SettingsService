@@ -51,7 +51,7 @@ func main() {
 		panic("Can't init settings: " + (*initSettingsErr).Error())
 	}
 
-	api.InitServer(*options.ServiceSetting.Port, *options.ServiceSetting.DbConnectionString, isDebug)
+	api.InitServer(*options.ServiceSetting.Port, *options.ServiceSetting.DBConnectionString, isDebug)
 }
 
 const instructions string = `Rest API for managing microservices settings.

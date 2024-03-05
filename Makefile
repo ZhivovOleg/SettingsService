@@ -49,9 +49,10 @@ help:
 	@echo '    make version=<version number> [lin, win, mac]'
 	@echo
 	@echo '  without params :: build project for current platform vith version 0.0.0'
-	@echo '  version=<version number> :: build project for current platform vith version <version number>'
+	@echo '  version=<version number> :: build project for current platform with version <version number>'
 	@echo
 	@echo '    Command list:'
+	@echo
 	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
 
 ## audit: run quality control checks

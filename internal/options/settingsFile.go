@@ -8,7 +8,7 @@ import (
 
 type Options struct {
 	Port *string				`json:"port"`
-	DbConnectionString *string	`json:"dbConnectionString"`
+	DBConnectionString *string	`json:"dbConnectionString"`
 }
 
 func readAppsettingsFile(filename string) (*Options, error) {

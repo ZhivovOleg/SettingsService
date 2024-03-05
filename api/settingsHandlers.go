@@ -25,11 +25,11 @@ import (
 func (c *Controller) GetAllOptions(context *gin.Context) {
 	requestContext := context.Request.Context()
 
-	servicesSettings, err := dal.GetAllSettingsFromDb(&requestContext, &c.database)
+	servicesSettings, err := dal.GetAllSettingsFromDB(&requestContext, &c.database)
 	
 	if err != nil {
 		utils.Logger.Error("Error on getting data from DB: " + (*err).Error())
-		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + (*err).Error())
+		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + (*err).Error())
 		return
 	}
 
@@ -51,16 +51,16 @@ func (c *Controller) GetOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
 	if serviceName == "" {
 		utils.Logger.Error("Argument error: Service name not found")
-		context.String(http.StatusBadRequest, "Argument error: Service name not found")
+		context.JSON(http.StatusBadRequest, "Argument error: Service name not found")
 		return
 	}
 
 	requestContext := context.Request.Context()
-	serviceSetting, err := dal.GetSettingsFromDb(&serviceName, &requestContext, &c.database)
+	serviceSetting, err := dal.GetSettingsFromDB(&serviceName, &requestContext, &c.database)
 	
 	if err != nil {
 		utils.Logger.Error("Error on getting data from DB: " + (*err).Error())
-		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + (*err).Error())
+		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + (*err).Error())
 		return
 	}
 
@@ -79,15 +79,13 @@ func (c *Controller) GetOptions(context *gin.Context) {
 //	@Router			/settings [post]
 func (c *Controller) NewOption(context *gin.Context) {
 	requestContext := context.Request.Context()
-	defer requestContext.Err()
 
 	rawByteVal, bodyErr := io.ReadAll(context.Request.Body)
 
 	if bodyErr != nil {
-		context.String(http.StatusBadRequest, "Unmarshal error: " + bodyErr.Error())
+		context.JSON(http.StatusBadRequest, "Unmarshal error: " + bodyErr.Error())
 	}
 	
-	//ni := 0
 	tmpRawByteVal := make([]byte, 0)
 
 	for i:=0; i<len(rawByteVal);i++ {
@@ -100,10 +98,15 @@ func (c *Controller) NewOption(context *gin.Context) {
 
 	res := &dto.BaseRequest{}
 
+	if len(res.ServiceName) <= 0 {
+		context.JSON(http.StatusBadRequest, "Argument error: serviceName")
+		return
+	}
+
 	jerr := json.Unmarshal(tmpRawByteVal, &res)
 
 	if jerr != nil {
-		context.String(http.StatusBadRequest, "Unmarshal error: " + jerr.Error())
+		context.JSON(http.StatusBadRequest, "Unmarshal error: " + jerr.Error())
 		return
 	}
 
@@ -117,10 +120,15 @@ func (c *Controller) NewOption(context *gin.Context) {
 		resultOpt = options
 	}
 
-	insertErr := dal.InsertNewOptionsToDb(&serviceName, &resultOpt, &requestContext, &c.database)
+	if len(resultOpt) <= 0 {
+		context.JSON(http.StatusBadRequest, "Argument error: options")
+		return
+	}
+
+	insertErr := dal.InsertNewOptionsToDB(&serviceName, &resultOpt, &requestContext, &c.database)
 
 	if insertErr != nil {
-		context.String(http.StatusInternalServerError, "Error on set data to DB: " + (*insertErr).Error())
+		context.JSON(http.StatusInternalServerError, "Error on set data to DB: " + (*insertErr).Error())
 		return
 	}
 	
@@ -139,16 +147,16 @@ func (c *Controller) NewOption(context *gin.Context) {
 func (c *Controller) RemoveOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
 	if serviceName == "" {
-		context.String(http.StatusBadRequest, "Argument error: Service name not found")
+		context.JSON(http.StatusBadRequest, "Argument error: Service name not found")
 		return
 	}
 
 	requestContext := context.Request.Context()
 
-	err := dal.DeleteSettingsFromDb(&serviceName, &requestContext, &c.database)
+	err := dal.DeleteSettingsFromDB(&serviceName, &requestContext, &c.database)
 	
 	if err != nil {
-		context.String(http.StatusInternalServerError, "Не удалось удалить настройки: " + (*err).Error())
+		context.JSON(http.StatusInternalServerError, "Не удалось удалить настройки: " + (*err).Error())
 		return
 	}
 
@@ -169,7 +177,7 @@ func (c *Controller) ReplaceOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
 	if serviceName == "" {
 		
-		context.String(http.StatusBadRequest, "Argument error: Service name not found")
+		context.JSON(http.StatusBadRequest, "Argument error: Service name not found")
 		return
 	}
 
@@ -177,15 +185,15 @@ func (c *Controller) ReplaceOptions(context *gin.Context) {
 	err := json.NewDecoder(context.Request.Body).Decode(&requestBody)
 
 	if err != nil {
-		context.String(http.StatusBadRequest, "Error on getting arguments from request body: " + err.Error())
+		context.JSON(http.StatusBadRequest, "Error on getting arguments from request body: " + err.Error())
 		return
 	}
 
 	requestContext := context.Request.Context()
-	updateErr := dal.ReplaceOptionsInDb(&serviceName, &requestBody.Options, &requestContext, &c.database)
+	updateErr := dal.ReplaceOptionsInDB(&serviceName, &requestBody.Options, &requestContext, &c.database)
 	
 	if updateErr != nil {
-		context.String(http.StatusInternalServerError, "Error on insert data to DB: " + (*updateErr).Error())
+		context.JSON(http.StatusInternalServerError, "Error on insert data to DB: " + (*updateErr).Error())
 		return
 	}
 
@@ -209,21 +217,21 @@ func (c *Controller) ReplaceOptions(context *gin.Context) {
 func (c *Controller) UpdateOption(context *gin.Context) {
 	if mime := context.ContentType(); mime != "text/plain" {
 		utils.Logger.Error("Request error: invalid MIME")
-		context.String(http.StatusBadRequest, "Request error: invalid MIME")
+		context.JSON(http.StatusBadRequest, "Request error: invalid MIME")
 		return
 	}
 
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
 	if serviceName == "" {
 		utils.Logger.Error("Argument error: Service name not found")
-		context.String(http.StatusBadRequest, "Argument error: Service name not found")
+		context.JSON(http.StatusBadRequest, "Argument error: Service name not found")
 		return
 	}
 
 	optionPath := strings.Trim(context.Param("path"), "/")
 	if optionPath == "" {
 		utils.Logger.Error("Argument error: option path not found")
-		context.String(http.StatusBadRequest, "Argument error: option path not found")
+		context.JSON(http.StatusBadRequest, "Argument error: option path not found")
 		return
 	}
 
@@ -232,15 +240,15 @@ func (c *Controller) UpdateOption(context *gin.Context) {
 	byteVal, err := io.ReadAll(context.Request.Body)
 	if err != nil {
 		utils.Logger.Error("Error on getting value from request body: " + err.Error())
-		context.String(http.StatusBadRequest, "Error on getting value from request body: " + err.Error())
+		context.JSON(http.StatusBadRequest, "Error on getting value from request body: " + err.Error())
 		return
 	}
 	strVal := string(byteVal)
 
-	dbErr := dal.UpdateOptionInDb(&serviceName, &optionPath, &strVal, &requestContext, &c.database)
+	dbErr := dal.UpdateOptionInDB(&serviceName, &optionPath, &strVal, &requestContext, &c.database)
 	if dbErr != nil {
 		utils.Logger.Error("Error while update data in DB: " + (*dbErr).Error())
-		context.String(http.StatusBadRequest, "Error while update data in DB: " + (*dbErr).Error())
+		context.JSON(http.StatusBadRequest, "Error while update data in DB: " + (*dbErr).Error())
 		return
 	}
 	context.Status(http.StatusOK)
@@ -260,23 +268,23 @@ func (c *Controller) GetConcreteOption(context *gin.Context) {
 	serviceName := context.Param("serviceName")
 	if serviceName == "" {
 		utils.Logger.Error("Argument error: Service name not found")
-		context.String(http.StatusBadRequest, "Argument error: Service name not found")
+		context.JSON(http.StatusBadRequest, "Argument error: Service name not found")
 		return
 	}
 
 	optionPath := context.Param("path")
 	if optionPath == "" {
 		utils.Logger.Error("Argument error: option path not found")
-		context.String(http.StatusBadRequest, "Argument error: option path not found")
+		context.JSON(http.StatusBadRequest, "Argument error: option path not found")
 		return
 	}
 
 	requestContext := context.Request.Context()
-	serviceSetting, serviceErr := dal.GetConcreteOptionFromDb(&serviceName, &optionPath, &requestContext, &c.database)
+	serviceSetting, serviceErr := dal.GetConcreteOptionFromDB(&serviceName, &optionPath, &requestContext, &c.database)
 	
 	if serviceErr != nil {
 		utils.Logger.Error("Error on getting data from DB: " + (*serviceErr).Error())
-		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + (*serviceErr).Error())
+		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + (*serviceErr).Error())
 		return
 	}
 	
@@ -298,7 +306,7 @@ func (c *Controller) DeleteConcreteOption(context *gin.Context) {
 
 	if serviceName == "" {
 		utils.Logger.Error("Argument error: Service name not found")
-		context.String(http.StatusBadRequest, "Argument error: Service name not found")
+		context.JSON(http.StatusBadRequest, "Argument error: Service name not found")
 		return
 	}
 
@@ -306,16 +314,16 @@ func (c *Controller) DeleteConcreteOption(context *gin.Context) {
 
 	if optionPath == "" {
 		utils.Logger.Error("Argument error: option path not found")
-		context.String(http.StatusBadRequest, "Argument error: option path not found")
+		context.JSON(http.StatusBadRequest, "Argument error: option path not found")
 		return
 	}
 
 	requestContext := context.Request.Context()
-	serviceErr := dal.DeleteConcreteOptionFromDb(&serviceName, &optionPath, &requestContext, &c.database)
+	serviceErr := dal.DeleteConcreteOptionFromDB(&serviceName, &optionPath, &requestContext, &c.database)
 	
 	if serviceErr != nil {
 		utils.Logger.Error("Error on getting data from DB: " + (*serviceErr).Error())
-		context.String(http.StatusInternalServerError, "Error on getting data from DB: " + (*serviceErr).Error())
+		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + (*serviceErr).Error())
 		return
 	}
 	

@@ -20,11 +20,11 @@ func InitSettings() *error {
 		}
 
 		port = *settings.Port
-		dbConnectionString = *settings.DbConnectionString
+		dbConnectionString = *settings.DBConnectionString
 	}
 
 	ServiceSetting.Port = &port
-	ServiceSetting.DbConnectionString = &dbConnectionString
+	ServiceSetting.DBConnectionString = &dbConnectionString
 	
 	return nil
 }
