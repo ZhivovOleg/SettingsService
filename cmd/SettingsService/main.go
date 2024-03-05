@@ -8,8 +8,6 @@ import (
 	"strings"
 
 	"os"
-
-	"go.uber.org/zap"
 )
 
 var Version string
@@ -33,15 +31,12 @@ func main() {
 		return
 	}
 
-	var isDebug bool
-	utils.InitializeLogger()
-	if env, _ := os.LookupEnv("SettingsServiceEnv"); env != "dev" {
-		isDebug = false
-		utils.Logger, _ = zap.NewProduction()
-	} else {
-		isDebug = true
-		utils.Logger, _ = zap.NewDevelopment()
+	isDebug := false
+	if env, _ := os.LookupEnv("SettingsServiceEnv"); env == "dev" {
+		isDebug = true		
 	}
+
+	utils.InitializeLogger(isDebug)
 	defer utils.Logger.Sync()
 	
 	initSettingsErr := options.InitSettings()
