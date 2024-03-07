@@ -3,9 +3,10 @@ package dal
 import (
 	"context"
 	"fmt"
-	"gisogd/SettingsService/internal/options"
-	"gisogd/SettingsService/internal/utils"
 	"sync"
+
+	"github.com/ZhivovOleg/SettingsService/internal/options"
+	"github.com/ZhivovOleg/SettingsService/internal/utils"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"

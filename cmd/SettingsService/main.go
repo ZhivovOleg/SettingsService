@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"gisogd/SettingsService/api"
-	"gisogd/SettingsService/internal/options"
-	"gisogd/SettingsService/internal/utils"
 	"strings"
+
+	"github.com/ZhivovOleg/SettingsService/api"
+	"github.com/ZhivovOleg/SettingsService/internal/options"
+	"github.com/ZhivovOleg/SettingsService/internal/utils"
 
 	"os"
 )

@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"gisogd/SettingsService/internal/dal"
-	"gisogd/SettingsService/internal/dto"
-	"gisogd/SettingsService/internal/utils"
+	"github.com/ZhivovOleg/SettingsService/internal/dal"
+	"github.com/ZhivovOleg/SettingsService/internal/dto"
+	"github.com/ZhivovOleg/SettingsService/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )

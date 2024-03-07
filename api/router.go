@@ -1,12 +1,13 @@
 package api
 
 import (
-	"gisogd/SettingsService/docs"
-	"gisogd/SettingsService/internal/dto"
-	"gisogd/SettingsService/internal/utils"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/ZhivovOleg/SettingsService/docs"
+	"github.com/ZhivovOleg/SettingsService/internal/dto"
+	"github.com/ZhivovOleg/SettingsService/internal/utils"
 
 	"github.com/go-errors/errors"
 

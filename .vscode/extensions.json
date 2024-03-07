@@ -3,8 +3,6 @@
         "ms-azuretools.vscode-docker",
         "ms-vscode.makefile-tools",
         "golang.go",
-        "vue.vscode-typescript-vue-plugin",
-        "vue.volar",
         "humao.rest-client",
         "christian-kohler.npm-intellisense"
     ]

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"gisogd/SettingsService/internal/dal"
+	"github.com/ZhivovOleg/SettingsService/internal/dal"
 
 	"github.com/gin-gonic/gin"
 )

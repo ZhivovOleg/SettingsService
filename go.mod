@@ -1,4 +1,4 @@
-module gisogd/SettingsService
+module github.com/ZhivovOleg/SettingsService
 
 go 1.21.6
 
