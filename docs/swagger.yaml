@@ -1,32 +1,24 @@
 basePath: /v1
 definitions:
-  dto.HttpError:
+  dto.BaseRequest:
+    type: object
+  dto.HTTPError:
+    description: Результат при ошибке
     properties:
       code:
+        description: Http-код ответа
         example: 400
         type: integer
       message:
+        description: Текст ошибки
         example: Ошибка парсинга
         type: string
-    type: object
-  dto.NewOptionsRequest:
-    description: Создать значение для сервиса
-    properties:
-      options:
-        description: Настройки в виде json-строки
-        example: '{"a":"a3"}'
-        type: string
-      serviceName:
-        description: Имя сервиса
-        type: string
-    required:
-    - options
-    - serviceName
     type: object
   dto.ReplaceOptionsRequest:
     description: Замена настроек
     properties:
       options:
+        description: Настройки в виде json-строки
         example: '{"c":"ca"}'
         type: string
     required:
@@ -54,11 +46,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
       summary: Get all service settings
       tags:
       - settings
@@ -72,7 +64,7 @@ paths:
         name: options
         required: true
         schema:
-          $ref: '#/definitions/dto.NewOptionsRequest'
+          $ref: '#/definitions/dto.BaseRequest'
       produces:
       - application/json
       responses:
@@ -81,11 +73,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
       summary: Add complete settings
       tags:
       - settings
@@ -106,11 +98,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
       summary: Complete remove service settings
       tags:
       - settings
@@ -132,11 +124,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
       summary: Get service settings
       tags:
       - settings
@@ -162,11 +154,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
       summary: Replace service settings
       tags:
       - settings
@@ -194,11 +186,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
       summary: Delete concrete service option
       tags:
       - settings
@@ -225,11 +217,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
       summary: Get concrete service option
       tags:
       - settings
@@ -263,11 +255,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dto.HttpError'
+            $ref: '#/definitions/dto.HTTPError'
       summary: Update service settings
       tags:
       - settings

@@ -19,8 +19,8 @@ import (
 //	@Tags			settings
 //	@Produce		json
 //	@Success		200	{object}	array
-//	@Failure		400	{object}	dto.HttpError
-//	@Failure		500	{object}	dto.HttpError
+//	@Failure		400	{object}	dto.HTTPError
+//	@Failure		500	{object}	dto.HTTPError
 //	@Router			/settings [get]
 func (c *controller) getAllOptions(context *gin.Context) {
 	requestContext := context.Request.Context()
@@ -44,8 +44,8 @@ func (c *controller) getAllOptions(context *gin.Context) {
 //	@Produce		json
 //	@Param			serviceName		path		string	true	"Service name"
 //	@Success		200	{object}	string
-//	@Failure		400	{object}	dto.HttpError
-//	@Failure		500	{object}	dto.HttpError
+//	@Failure		400	{object}	dto.HTTPError
+//	@Failure		500	{object}	dto.HTTPError
 //	@Router			/settings/{serviceName} [get]
 func (c *controller) getServiceOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
@@ -72,10 +72,10 @@ func (c *controller) getServiceOptions(context *gin.Context) {
 //	@Tags			settings
 //  @Accept       	json
 //	@Produce		json
-//	@Param			options		body	dto.NewOptionsRequest	true	"Options DTO"
+//	@Param			options		body	dto.BaseRequest	true	"Options DTO"
 //	@Success		200
-//	@Failure		400	{object}	dto.HttpError
-//	@Failure		500	{object}	dto.HttpError
+//	@Failure		400	{object}	dto.HTTPError
+//	@Failure		500	{object}	dto.HTTPError
 //	@Router			/settings [post]
 func (c *controller) addServiceOptions(context *gin.Context) {
 	requestContext := context.Request.Context()
@@ -141,8 +141,8 @@ func (c *controller) addServiceOptions(context *gin.Context) {
 //	@Produce		json
 //	@Param			serviceName		path	string	true	"Service name"
 //	@Success		200
-//	@Failure		400	{object}	dto.HttpError
-//	@Failure		500	{object}	dto.HttpError
+//	@Failure		400	{object}	dto.HTTPError
+//	@Failure		500	{object}	dto.HTTPError
 //	@Router			/settings/{serviceName}  [delete]
 func (c *controller) deleteServiceWithOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
@@ -170,8 +170,8 @@ func (c *controller) deleteServiceWithOptions(context *gin.Context) {
 //	@Param			serviceName		path	string						true	"Service name"
 //	@Param			settings		body	dto.ReplaceOptionsRequest	true	"Service settings"
 //	@Success		200
-//	@Failure		400	{object}	dto.HttpError
-//	@Failure		500	{object}	dto.HttpError
+//	@Failure		400	{object}	dto.HTTPError
+//	@Failure		500	{object}	dto.HTTPError
 //	@Router			/settings/{serviceName}  [put]
 func (c *controller) replaceServiceOptions(context *gin.Context) {
 	serviceName := strings.Trim(context.Param("serviceName"), "/")
@@ -211,8 +211,8 @@ func (c *controller) replaceServiceOptions(context *gin.Context) {
 //	@Param			path			path	string	true	"Option path"
 //	@Param			value			body	string	true	"Option value"
 //	@Success		200
-//	@Failure		400	{object}	dto.HttpError
-//	@Failure		500	{object}	dto.HttpError
+//	@Failure		400	{object}	dto.HTTPError
+//	@Failure		500	{object}	dto.HTTPError
 //	@Router			/settings/{serviceName}/{path}  [patch]
 func (c *controller) updateSingleValue(context *gin.Context) {
 	if mime := context.ContentType(); mime != "text/plain" {
@@ -261,8 +261,8 @@ func (c *controller) updateSingleValue(context *gin.Context) {
 //	@Param			serviceName		path		string	true	"Service name"
 //	@Param			path			path		string	true	"Option path, comma-separated keys"
 //	@Success		200	{object}	string
-//	@Failure		400	{object}	dto.HttpError
-//	@Failure		500	{object}	dto.HttpError
+//	@Failure		400	{object}	dto.HTTPError
+//	@Failure		500	{object}	dto.HTTPError
 //	@Router			/settings/{serviceName}/{path} [get]
 func (c *controller) getSingleValue(context *gin.Context) {
 	serviceName := context.Param("serviceName")
@@ -298,8 +298,8 @@ func (c *controller) getSingleValue(context *gin.Context) {
 //	@Param			serviceName		path		string	true	"Service name"
 //	@Param			path			path		string	true	"Option path, comma-separated keys"
 //	@Success		200	{object}	string
-//	@Failure		400	{object}	dto.HttpError
-//	@Failure		500	{object}	dto.HttpError
+//	@Failure		400	{object}	dto.HTTPError
+//	@Failure		500	{object}	dto.HTTPError
 //	@Router			/settings/{serviceName}/{path} [delete]
 func (c *controller) deleteSingleValue(context *gin.Context) {
 	serviceName := context.Param("serviceName")

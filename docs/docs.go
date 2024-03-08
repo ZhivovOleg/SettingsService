@@ -35,13 +35,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     }
                 }
@@ -65,7 +65,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.NewOptionsRequest"
+                            "$ref": "#/definitions/dto.BaseRequest"
                         }
                     }
                 ],
@@ -76,13 +76,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     }
                 }
@@ -117,13 +117,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     }
                 }
@@ -162,13 +162,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     }
                 }
@@ -198,13 +198,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     }
                 }
@@ -246,13 +246,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     }
                 }
@@ -292,13 +292,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     }
                 }
@@ -347,13 +347,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.HttpError"
+                            "$ref": "#/definitions/dto.HTTPError"
                         }
                     }
                 }
@@ -361,35 +361,22 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.HttpError": {
+        "dto.BaseRequest": {
+            "type": "object"
+        },
+        "dto.HTTPError": {
+            "description": "Результат при ошибке",
             "type": "object",
             "properties": {
                 "code": {
+                    "description": "Http-код ответа",
                     "type": "integer",
                     "example": 400
                 },
                 "message": {
+                    "description": "Текст ошибки",
                     "type": "string",
                     "example": "Ошибка парсинга"
-                }
-            }
-        },
-        "dto.NewOptionsRequest": {
-            "description": "Создать значение для сервиса",
-            "type": "object",
-            "required": [
-                "options",
-                "serviceName"
-            ],
-            "properties": {
-                "options": {
-                    "description": "Настройки в виде json-строки",
-                    "type": "string",
-                    "example": "{\"a\":\"a3\"}"
-                },
-                "serviceName": {
-                    "description": "Имя сервиса",
-                    "type": "string"
                 }
             }
         },
@@ -401,6 +388,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "options": {
+                    "description": "Настройки в виде json-строки",
                     "type": "string",
                     "example": "{\"c\":\"ca\"}"
                 }
