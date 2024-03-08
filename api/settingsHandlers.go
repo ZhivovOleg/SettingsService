@@ -28,8 +28,8 @@ func (c *controller) getAllOptions(context *gin.Context) {
 	servicesSettings, err := dal.GetAllSettingsFromDB(&requestContext, &c.database)
 	
 	if err != nil {
-		utils.Logger.Error("Error on getting data from DB: " + (*err).Error())
-		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + (*err).Error())
+		utils.Logger.Error("Error on getting data from DB: " + err.Error())
+		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + err.Error())
 		return
 	}
 
@@ -59,8 +59,8 @@ func (c *controller) getServiceOptions(context *gin.Context) {
 	serviceSetting, err := dal.GetSettingsFromDB(&serviceName, &requestContext, &c.database)
 	
 	if err != nil {
-		utils.Logger.Error("Error on getting data from DB: " + (*err).Error())
-		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + (*err).Error())
+		utils.Logger.Error("Error on getting data from DB: " + err.Error())
+		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + err.Error())
 		return
 	}
 
@@ -128,7 +128,7 @@ func (c *controller) addServiceOptions(context *gin.Context) {
 	insertErr := dal.InsertNewOptionsToDB(&serviceName, &resultOpt, &requestContext, &c.database)
 
 	if insertErr != nil {
-		context.JSON(http.StatusInternalServerError, "Error on set data to DB: " + (*insertErr).Error())
+		context.JSON(http.StatusInternalServerError, "Error on set data to DB: " + insertErr.Error())
 		return
 	}
 	
@@ -156,7 +156,7 @@ func (c *controller) deleteServiceWithOptions(context *gin.Context) {
 	err := dal.DeleteSettingsFromDB(&serviceName, &requestContext, &c.database)
 	
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, "Не удалось удалить настройки: " + (*err).Error())
+		context.JSON(http.StatusInternalServerError, "Не удалось удалить настройки: " + err.Error())
 		return
 	}
 
@@ -193,7 +193,7 @@ func (c *controller) replaceServiceOptions(context *gin.Context) {
 	updateErr := dal.ReplaceOptionsInDB(&serviceName, &requestBody.Options, &requestContext, &c.database)
 	
 	if updateErr != nil {
-		context.JSON(http.StatusInternalServerError, "Error on insert data to DB: " + (*updateErr).Error())
+		context.JSON(http.StatusInternalServerError, "Error on insert data to DB: " + updateErr.Error())
 		return
 	}
 
@@ -247,8 +247,8 @@ func (c *controller) updateSingleValue(context *gin.Context) {
 
 	dbErr := dal.UpdateOptionInDB(&serviceName, &optionPath, &strVal, &requestContext, &c.database)
 	if dbErr != nil {
-		utils.Logger.Error("Error while update data in DB: " + (*dbErr).Error())
-		context.JSON(http.StatusBadRequest, "Error while update data in DB: " + (*dbErr).Error())
+		utils.Logger.Error("Error while update data in DB: " + dbErr.Error())
+		context.JSON(http.StatusBadRequest, "Error while update data in DB: " + dbErr.Error())
 		return
 	}
 	context.Status(http.StatusOK)
@@ -283,8 +283,8 @@ func (c *controller) getSingleValue(context *gin.Context) {
 	serviceSetting, serviceErr := dal.GetConcreteOptionFromDB(&serviceName, &optionPath, &requestContext, &c.database)
 	
 	if serviceErr != nil {
-		utils.Logger.Error("Error on getting data from DB: " + (*serviceErr).Error())
-		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + (*serviceErr).Error())
+		utils.Logger.Error("Error on getting data from DB: " + serviceErr.Error())
+		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + serviceErr.Error())
 		return
 	}
 	
@@ -322,8 +322,8 @@ func (c *controller) deleteSingleValue(context *gin.Context) {
 	serviceErr := dal.DeleteConcreteOptionFromDB(&serviceName, &optionPath, &requestContext, &c.database)
 	
 	if serviceErr != nil {
-		utils.Logger.Error("Error on getting data from DB: " + (*serviceErr).Error())
-		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + (*serviceErr).Error())
+		utils.Logger.Error("Error on getting data from DB: " + serviceErr.Error())
+		context.JSON(http.StatusInternalServerError, "Error on getting data from DB: " + serviceErr.Error())
 		return
 	}
 	

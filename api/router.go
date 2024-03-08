@@ -24,13 +24,15 @@ func InitServer(port string, dbConnStr string, isDebug bool) {
 
 	docs.SwaggerInfo.Schemes = []string{"http"}
 
-	var wg sync.WaitGroup
-	wg.Add(1)
-	serverError := startServer(initAPI(initRouter(isDebug), dbConnStr), "localhost:" + port, &wg)
-	if serverError != nil {
-		utils.Logger.Fatal("Error on start web  server: " + serverError.Error())
+	for {
+		var wg sync.WaitGroup
+		wg.Add(1)
+		serverError := startServer(initAPI(initRouter(isDebug), dbConnStr), "localhost:" + port, &wg)
+		if serverError != nil {
+			utils.Logger.Error("Web server error: " + serverError.Error())
+		}
+		wg.Wait()
 	}
-	wg.Wait()
 }
 
 func errorHandler(c *gin.Context, err any) {

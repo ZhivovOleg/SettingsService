@@ -43,8 +43,8 @@ func main() {
 	initSettingsErr := options.InitSettings()
 
 	if initSettingsErr != nil {
-		utils.Logger.Error("Can't init settings: " + (*initSettingsErr).Error())
-		panic("Can't init settings: " + (*initSettingsErr).Error())
+		utils.Logger.Error("Can't init settings: " + initSettingsErr.Error())
+		panic("Can't init settings: " + initSettingsErr.Error())
 	}
 
 	api.InitServer(*options.ServiceSetting.Port, *options.ServiceSetting.DBConnectionString, isDebug)

@@ -7,7 +7,8 @@ import (
 
 var ServiceSetting *Options = new(Options)
 
-func InitSettings() *error {
+// InitSettings - initialize setting from ENV or appSettings.json
+func InitSettings() error {
 	port, portExistsOk := os.LookupEnv("SettingsServicePort")
 	dbConnectionString, dbConnectionStringOk := os.LookupEnv("SettingsServiceDbConnectionString")	
 
@@ -16,7 +17,7 @@ func InitSettings() *error {
 
 		if err != nil {
 			err := fmt.Errorf("Не удалось получить настройки приложения: " + err.Error())
-			return &err
+			return err
 		}
 
 		port = *settings.Port

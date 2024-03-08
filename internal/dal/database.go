@@ -12,6 +12,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// Struct for access to database
 type Orm struct {
 	pool *pgxpool.Pool
 	locker *sync.Once
@@ -44,11 +45,11 @@ func (o *Orm) Init(connString string) error {
 	return initPoolerr
 }
 
-func (o *Orm) execWithReturn(query string, ctx *context.Context) (*[]string, *error) {
+func (o *Orm) execWithReturn(query string, ctx *context.Context) (*[]string, error) {
 	rows, err := o.pool.Query(*ctx, query)
 	
 	if err != nil {
-		return nil, &err
+		return nil, err
 	}
 
 	defer rows.Close()
@@ -61,7 +62,7 @@ func (o *Orm) execWithReturn(query string, ctx *context.Context) (*[]string, *er
 
 		if err != nil {
 			fmt.Println(err.Error())
-			return nil, &err
+			return nil, err
     	}
 
 		result = append(result, currStr)
@@ -69,37 +70,37 @@ func (o *Orm) execWithReturn(query string, ctx *context.Context) (*[]string, *er
 
 	if err != nil {
 		fmt.Println(err.Error())
-		return nil, &err
+		return nil, err
     }
 
 	return &result, nil
 }
 
-func (o *Orm) execWithArgs(query string, args *pgx.NamedArgs, ctx *context.Context) *error {
+func (o *Orm) execWithArgs(query string, args *pgx.NamedArgs, ctx *context.Context) error {
 	_, err := o.pool.Exec(*ctx, query, *args)
 	
 	if err != nil {
-		return &err
+		return err
 	}
 
 	return nil
 }
 
-func (o *Orm) exec(query string, ctx *context.Context) *error {
+func (o *Orm) exec(query string, ctx *context.Context) error {
 	_, err := o.pool.Exec(*ctx, query)
 	
 	if err != nil {
-		return &err
+		return err
 	}
 
 	return nil
 }
 
-func (o *Orm) execWithTypedReturn(query string, ctx *context.Context) (*map[string]string, *error) {
+func (o *Orm) execWithTypedReturn(query string, ctx *context.Context) (*map[string]string, error) {
 	rows, err := o.pool.Query(*ctx, query)
 	
 	if err != nil {
-		return nil, &err
+		return nil, err
 	}
 
 	defer rows.Close()
@@ -113,7 +114,7 @@ func (o *Orm) execWithTypedReturn(query string, ctx *context.Context) (*map[stri
 
 		if err != nil {
 			fmt.Println(err.Error())
-			return nil, &err
+			return nil, err
     	}
 
 		result[currName] = currOpt
@@ -121,7 +122,7 @@ func (o *Orm) execWithTypedReturn(query string, ctx *context.Context) (*map[stri
 
 	if err != nil {
 		fmt.Println(err.Error())
-		return nil, &err
+		return nil, err
     }
 
 	return &result, nil
