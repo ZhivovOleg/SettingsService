@@ -92,7 +92,7 @@ or prepare image with tag `settingsservice`
 ```bash
 make image
 ```
-or container with tag `settingsservice` and name `SettingsService`
+or run container with tag `settingsservice` and name `SettingsService`
 ```bash
 make docker
 ```
@@ -121,13 +121,12 @@ For non-docker environment don't forget set up env variables:
 
 ## TO DO
 
-1. dockerize 
-0. healthchecks
-0. fix config. How do it best? Now ENV 
+1. [healthchecks](https://github.com/tavsec/gin-healthcheck)
 0. Add push mechanism for setting's updates
 0. Add auth
 0. Add unit-tests
 0. Try another DB, for example mongo
+0. fix config. How do it best? Now ENV 
 0. Write help instructions
 
 ## History
@@ -137,3 +136,4 @@ For non-docker environment don't forget set up env variables:
 0. versioning
 0. SPA
 0. fix results of stat analyst (except swagger comments)
+0. dockerize
