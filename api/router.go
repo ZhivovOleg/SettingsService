@@ -21,18 +21,16 @@ import (
 
 // InitServer: starts instance of GIN router
 func InitServer(port string, dbConnStr string, isDebug bool) {
-
 	docs.SwaggerInfo.Schemes = []string{"http"}
-
-	for {
-		var wg sync.WaitGroup
-		wg.Add(1)
-		serverError := startServer(initAPI(initRouter(isDebug), dbConnStr), "localhost:" + port, &wg)
-		if serverError != nil {
-			utils.Logger.Error("Web server error: " + serverError.Error())
-		}
-		wg.Wait()
+	var wg sync.WaitGroup
+	wg.Add(1)
+	router := initRouter(isDebug)
+	api := initAPI(router, dbConnStr)
+	serverError := startServer(api, ":" + port, &wg)
+	if serverError != nil {
+		utils.Logger.Error("Web server error: " + serverError.Error())
 	}
+	wg.Wait()	
 }
 
 func errorHandler(c *gin.Context, err any) {

@@ -28,7 +28,12 @@ Recommended IDE - VSCode.
 <br />
 Environment for project in `./.vscode/launch.json`.
 <br />
-For another IDE's don't forget set up env variable `"SettingsServiceEnv": "dev"`.
+For another IDE's don't forget set up env variables:
+```bash
+"SettingsServicePort": "9000",
+"SettingsServiceDbConnectionString": "postgres://pg:1@localhost:5432/servicesSettings_db",
+"SettingsServiceEnv": "dev"
+```
 
 ### Requiremens
 1. [Go](https://go.dev/dl/)
@@ -76,6 +81,21 @@ For another IDE's don't forget set up env variable `"SettingsServiceEnv": "dev"`
 
 0. `npm run dev`
 
+### Run in Docker
+
+```bash
+make front
+docker build --tag 'settingsservice' .
+docker run -d -p 9000:9000 --name 'SettingsService' 'settingsservice'
+```
+or prepare image with tag `settingsservice`
+```bash
+make image
+```
+or container with tag `settingsservice` and name `SettingsService`
+```bash
+make docker
+```
 
 ## Production 
 
@@ -93,15 +113,22 @@ or use `Makefile`:
 make help
 ```
 
-## TODO
+For non-docker environment don't forget set up env variables:
+```bash
+"SettingsServicePort": "9000",
+"SettingsServiceDbConnectionString": "postgres://pg:1@localhost:5432/servicesSettings_db"
+```
+
+## TO DO
 
 1. dockerize 
+0. healthchecks
+0. fix config. How do it best? Now ENV 
 0. Add push mechanism for setting's updates
 0. Add auth
 0. Add unit-tests
 0. Try another DB, for example mongo
 0. Write help instructions
-0. 
 
 ## History
 

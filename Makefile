@@ -1,6 +1,11 @@
 current_os := $$(go env GOOS)
 current_arch := $$(go env GOARCH)
 
+ifdef v
+version = $$v
+endif
+
+
 ifeq ($(MAKECMDGOALS),)
 ifndef version
 override version := 0.0.0
@@ -9,19 +14,19 @@ endif
 
 ifeq ($(MAKECMDGOALS),mac)
 ifndef version
-$(error ERROR: 'version' flag must be defined)
+$(error ERROR: 'version' or 'v' flag must be defined)
 endif
 endif
 
 ifeq ($(MAKECMDGOALS),win)
 ifndef version
-$(error ERROR: 'version' flag must be defined)
+$(error ERROR: 'version' or 'v' flag must be defined)
 endif
 endif
 
 ifeq ($(MAKECMDGOALS),lin)
 ifndef version
-$(error ERROR: 'version' flag must be defined)
+$(error ERROR: 'version' or 'v' flag must be defined)
 endif
 endif
 
@@ -44,12 +49,13 @@ help:
 	@echo '    Usage:'
 	@echo
 	@echo '    make'
+	@echo '    make v=<version number>'
 	@echo '    make version=<version number>'
 	@echo '    make [help, audit, swag, dep]'
 	@echo '    make version=<version number> [lin, win, mac]'
 	@echo
 	@echo '  without params :: build project for current platform vith version 0.0.0'
-	@echo '  version=<version number> :: build project for current platform with version <version number>'
+	@echo '  v=<version number> equal version=<version number> :: build project for current platform with version <version number>'
 	@echo
 	@echo '    Command list:'
 	@echo
@@ -104,6 +110,11 @@ swag:
 .PHONY: build
 build: clean front swag 
 	GOOS=${TARGET_OS} GOARCH=${TARGET_ARCH} go build -o ./bin/${TARGET_OS}-${TARGET_ARCH}/${version}/SettingsService${SUFFIX} -ldflags "-s -w -X main.Version=${version}" ${MAIN_PACKAGE_PATH}
+	cp ./configs/appSettings.json ./bin/${TARGET_OS}-${TARGET_ARCH}/${version}/
+	mkdir ./bin/${TARGET_OS}-${TARGET_ARCH}/${version}/web
+	cp ./web/index.html ./bin/${TARGET_OS}-${TARGET_ARCH}/${version}/web/
+	cp ./web/logo.svg ./bin/${TARGET_OS}-${TARGET_ARCH}/${version}/web/
+	cp -R ./web/assets ./bin/${TARGET_OS}-${TARGET_ARCH}/${version}/web/
 
 ## front: build Vue SPA
 .PHONY: front
@@ -124,8 +135,18 @@ clean-front:
 
 .PHONY: clean-back
 clean-back:
-	@rm -rf ./bin
+	@rm -rf ./bin/${TARGET_OS}-${TARGET_ARCH}/${version}
 
 ## clean: remove all artifacts
 .PHONY: clean
 clean: clean-front clean-back
+
+## image: build docker image
+.PHONY: image
+image: lin
+	docker build --tag 'settingsservice' .
+
+## 
+.PHONY: docker
+docker: image
+	docker run -d -p 9000:9000 --name 'SettingsService' 'settingsservice'

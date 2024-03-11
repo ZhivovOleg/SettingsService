@@ -40,7 +40,7 @@ func main() {
 	utils.InitializeLogger(isDebug)
 	defer utils.Logger.Sync()
 	
-	initSettingsErr := options.InitSettings()
+	initSettingsErr := options.InitSettings(isDebug)
 
 	if initSettingsErr != nil {
 		utils.Logger.Error("Can't init settings: " + initSettingsErr.Error())

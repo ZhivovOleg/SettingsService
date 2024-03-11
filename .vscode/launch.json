@@ -9,7 +9,7 @@
             "program": "${workspaceRoot}/cmd/SettingsService",
             "console": "integratedTerminal",
             "env": {
-                "SettingsServicePort": "9999",
+                "SettingsServicePort": "5000",
                 "SettingsServiceDbConnectionString": "postgres://pg:1@localhost:5432/servicesSettings_db",
                 "SettingsServiceEnv": "dev"
             },

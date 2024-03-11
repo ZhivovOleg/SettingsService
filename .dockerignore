@@ -1,0 +1,8 @@
+.git
+.vscode
+test
+**/.DS_Store
+**/LICENSE
+**/Readme.md
+**/node_modules
+**/package-lock.json

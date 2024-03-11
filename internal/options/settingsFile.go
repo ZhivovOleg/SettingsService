@@ -3,30 +3,27 @@ package options
 import (
 	"encoding/json"
 	"errors"
+	"io/fs"
 	"os"
 )
 
-type Options struct {
-	Port *string				`json:"port"`
-	DBConnectionString *string	`json:"dbConnectionString"`
-}
-
-func readAppsettingsFile(filename string) (*Options, error) {
-	if _, err := os.Stat(filename); err == nil {
-		jsonFile, err := os.Open(filename)		
+func readAppsettingsFile(fileName string) (string, string, error) {
+	if _, err := os.Stat(fileName); err == nil {
+		jsonFile, err := os.Open(fileName)		
 		if err != nil {
-			return nil, errors.New("Ошибка при открытии файла настроек приложения:" + err.Error())
+			return "", "", errors.New("Ошибка при открытии файла настроек приложения:" + err.Error())
 		}		
 		defer jsonFile.Close()
 
-		result := &Options{}
+		result := make(map[string]string)
 		jsonParser := json.NewDecoder(jsonFile)
 		jsonParser.Decode(&result)
 
-		return result, nil
-	} else if errors.Is(err, os.ErrNotExist) {
-		return nil, errors.New("не найден файл настроек приложения")
+		return result["settingsServicePort"], result["settingsServiceDbConnectionString"], nil
+	} else if errors.Is(err, os.ErrNotExist) || errors.Is(err, &fs.PathError{}) {
+		wd, _ := os.Getwd()
+		return "", "", errors.New("не найден файл настроек приложения: " + wd + "/" + fileName)
 	}
 
-	return nil, errors.New("ошибка при чтении файла настроек")
+	return "", "", errors.New("ошибка при чтении файла настроек")
 }
