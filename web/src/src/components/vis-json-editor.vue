@@ -74,6 +74,7 @@ onMounted(() => {
 </script>
 <style scoped>
 .svelte-jsoneditor-vue {
+  min-height: 150px;
   display: flex;
   flex: 1;
 }
