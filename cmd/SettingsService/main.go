@@ -15,7 +15,7 @@ var Version string
 
 //	@title						Settings service API
 //	@version					1.0
-//	@description				Сервис управления настройками информационной системы ГИСОГД
+//	@description				Сервис управления настройками информационной системы
 //	@BasePath					/v1
 // 	@externalDocs.description  	OpenAPI
 // 	@externalDocs.url          	https://swagger.io/resources/open-api/
