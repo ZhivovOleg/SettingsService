@@ -108,7 +108,8 @@ swag:
 	go run github.com/swaggo/swag/cmd/swag@latest init -g cmd/SettingsService/main.go -o docs
 
 .PHONY: build
-build: clean front swag 
+build: clean front swag
+	go mod download
 	GOOS=${TARGET_OS} GOARCH=${TARGET_ARCH} go build -o ./bin/${TARGET_OS}-${TARGET_ARCH}/${version}/SettingsService${SUFFIX} -ldflags "-s -w -X main.Version=${version}" ${MAIN_PACKAGE_PATH}
 	cp ./configs/appSettings.json ./bin/${TARGET_OS}-${TARGET_ARCH}/${version}/
 	mkdir ./bin/${TARGET_OS}-${TARGET_ARCH}/${version}/web
